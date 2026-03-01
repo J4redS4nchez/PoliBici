@@ -38,7 +38,7 @@ Sistema web construido con **Flask** para administrar y monitorear docks/usuario
 - **MySQL** (o MariaDB) activo
 - Una base de datos con las tablas que usa el sistema
 
-##Imagenes
+##  Imagenes
 
 - Dock
 ![1](https://github.com/user-attachments/assets/9d4803b7-281b-43b3-a0b5-815be919d7eb)
