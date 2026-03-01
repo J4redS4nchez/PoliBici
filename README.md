@@ -38,10 +38,22 @@ Sistema web construido con **Flask** para administrar y monitorear docks/usuario
 - **MySQL** (o MariaDB) activo
 - Una base de datos con las tablas que usa el sistema
 
-##  Instalación
+##Imagenes
 
-1) Clona el repositorio:
+- Dock
+![1](https://github.com/user-attachments/assets/9d4803b7-281b-43b3-a0b5-815be919d7eb)
 
-```bash
-git clone <tu-repo>
-cd PoliBICI_FLASK
+- Interfaz del dock
+![2](https://github.com/user-attachments/assets/e7ff8d38-0f22-41c7-b4f6-1d0128b137b2)
+
+- Dashboard
+![3](https://github.com/user-attachments/assets/cf0ef092-eb86-40ca-a8a0-d605a7d0cfe4)
+
+- Docks
+![4](https://github.com/user-attachments/assets/dfa5f541-1641-4822-a97c-6b398551a97d)
+
+- Configuración
+![5](https://github.com/user-attachments/assets/c2458a90-8d7a-4f39-b0ec-efc0f42d7c38)
+
+- Notificaciones
+![6](https://github.com/user-attachments/assets/629d3217-fdd3-47b2-ac68-4b5091442153)
