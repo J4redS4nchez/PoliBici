@@ -1,0 +1,290 @@
+<!-- Cuadro flotante de notificaciones -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/notificaciones_cuadro.css') }}">
+
+<div class="notif-overlay" id="notif-overlay">
+  <div class="notif-panel">
+
+      <header class="notif-header">
+        <h2>Notificaciones</h2>
+
+        <!-- Botón de basura → esquina superior derecha -->
+        <button
+          id="btn-eliminar-todas"
+          class="notif-header-icon notif-close"
+          type="button"
+          aria-label="Eliminar todas las notificaciones"
+          title="Eliminar Notificaciones">
+          🗑
+        </button>
+
+      </header>
+
+
+    <div class="notif-body">
+      <div class="notif-list">
+        {% if notificaciones and notificaciones|length > 0 %}
+          {% for n in notificaciones %}
+            {% set es_no_leida = (n.leida == 0) %}
+            {% set es_riesgo_alto = n.riesgo and n.riesgo|lower == 'alto' %}
+            {# Foquito rojo: cualquier notificación cuyo actor sea 'dock' #}
+            {% set es_dock = n.actor and n.actor|lower == 'dock' %}
+
+            <article
+              class="notif-item{% if es_no_leida %} notif-unread{% endif %}{% if es_riesgo_alto %} notif-risk{% endif %}"
+              data-id="{{ n.id }}">
+              <div class="notif-title">
+                {{ n.notificacion }}
+              </div>
+
+              <!-- Solo el tiempo relativo -->
+              <div class="notif-meta">
+                {{ n.tiempo_relativo }}
+              </div>
+
+              {% if es_dock %}
+                <span class="notif-dot" aria-hidden="true"></span>
+              {% endif %}
+            </article>
+          {% endfor %}
+        {% else %}
+          <p class="notif-empty">No hay notificaciones por mostrar.</p>
+        {% endif %}
+      </div>
+    </div>
+
+            <footer class="notif-footer">
+
+              <!-- Botón de visto → esquina inferior derecha -->
+              <button
+                id="btn-marcar-todas"
+                class="notif-header-icon notif-footer-icon notif-footer-bottom-right"
+                type="button"
+                aria-label="Marcar todas como leídas"
+                title="Marcar Notificaciones como Leído">
+                ✓
+              </button>
+
+
+
+            </footer>
+
+  </div>
+</div>
+
+<!-- JS específico del cuadro de notificaciones -->
+<script>
+  // Esta función se llamará desde panel_control.html
+  window.initNotifOverlay = function(){
+    var overlay = document.getElementById('notif-overlay');
+    if (!overlay) return;
+
+    var listEl = overlay.querySelector('.notif-list');
+    if (!listEl) return;
+
+    var apiListUrl = '{{ url_for('notificaciones_cuadro_bp.api_list') }}';
+    var apiMarkUrl = '{{ url_for('notificaciones_cuadro_bp.marcar_leida') }}';
+
+    function attachClickHandlers(){
+      var items = overlay.querySelectorAll('.notif-item[data-id]');
+      for (var i = 0; i < items.length; i++){
+        (function(item){
+          item.onclick = function(){
+            var id = item.getAttribute('data-id');
+            if (!id) return;
+
+            fetch(apiMarkUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'fetch'
+              },
+              body: JSON.stringify({ id: id })
+            })
+            .then(function(resp){ return resp.json(); })
+            .then(function(data){
+              if (data && data.ok){
+                // 👉 Solo quitamos el estilo de "no leída"
+                item.classList.remove('notif-unread');
+
+
+                if (window.refreshNotifBadge) {
+                    window.refreshNotifBadge();
+                  }
+
+                // 👉 YA NO quitamos el foquito rojo: se queda si es de dock
+              } else {
+                console.error('Error al marcar como leída:', data);
+              }
+            })
+            .catch(function(err){
+              console.error('Error de red al marcar como leída:', err);
+            });
+          };
+        })(items[i]);
+      }
+    }
+
+    function renderList(items){
+      // Limpiar lista
+      while (listEl.firstChild){
+        listEl.removeChild(listEl.firstChild);
+      }
+
+      if (!items || !items.length){
+        var p = document.createElement('p');
+        p.className = 'notif-empty';
+        p.textContent = 'No hay notificaciones por mostrar.';
+        listEl.appendChild(p);
+        return;
+      }
+
+      items.forEach(function(n){
+        var art = document.createElement('article');
+        art.className = 'notif-item';
+        if (!n.leida){
+          art.className += ' notif-unread';
+        }
+        if (n.riesgo && String(n.riesgo).toLowerCase() === 'alto'){
+          art.className += ' notif-risk';
+        }
+        art.setAttribute('data-id', n.id);
+
+        var t = document.createElement('div');
+        t.className = 'notif-title';
+        t.textContent = n.notificacion || '';
+        art.appendChild(t);
+
+        var meta = document.createElement('div');
+        meta.className = 'notif-meta';
+        meta.textContent = n.tiempo_relativo || '';
+        art.appendChild(meta);
+
+        // Foquito rojo: cualquier notificación cuyo actor sea 'dock'
+        if (n.actor && String(n.actor).toLowerCase() === 'dock'){
+          var dot = document.createElement('span');
+          dot.className = 'notif-dot';
+          dot.setAttribute('aria-hidden', 'true');
+          art.appendChild(dot);
+        }
+
+        listEl.appendChild(art);
+      });
+
+      attachClickHandlers();
+    }
+
+    function fetchAndRender(){
+      fetch(apiListUrl, {
+        cache: 'no-store',
+        headers: { 'X-Requested-With': 'fetch' }
+      })
+      .then(function(resp){
+        if (!resp.ok) return null;
+        return resp.json();
+      })
+      .then(function(data){
+        if (!data || !data.items) return;
+        renderList(data.items);
+      })
+      .catch(function(err){
+        console.error('Error cargando notificaciones:', err);
+      });
+    }
+
+    // Listeners para la lista que ya vino renderizada
+    attachClickHandlers();
+
+    // Primer refresco desde la API
+    fetchAndRender();
+
+    // Timer global para este overlay
+    var INTERVALO_MS = 5000;
+    if (window._notifTimer){
+      clearInterval(window._notifTimer);
+    }
+    window._notifTimer = setInterval(function(){
+      if (!document.body.contains(overlay)){
+        clearInterval(window._notifTimer);
+        return;
+      }
+      fetchAndRender();
+    }, INTERVALO_MS);
+
+
+
+// --- Botón para marcar TODAS como leídas ---
+var btnMarcarTodas = overlay.querySelector('#btn-marcar-todas');
+if (btnMarcarTodas) {
+  btnMarcarTodas.addEventListener('click', function () {
+
+    fetch('{{ url_for("notificaciones_cuadro_bp.marcar_todas") }}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'fetch'
+      }
+    })
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.ok) {
+        // ✔️ Quitar visualmente notif-unread de TODAS las tarjetas
+        overlay.querySelectorAll('.notif-item').forEach(item => {
+          item.classList.remove('notif-unread');
+        });
+
+        // 🔔 Actualizar el numerito de la campana
+        if (window.refreshNotifBadge) {
+          window.refreshNotifBadge();
+        }
+
+      } else {
+        console.error("Error al marcar todas:", data);
+      }
+    })
+    .catch(err => console.error("Error de red al marcar todas:", err));
+  });
+}
+
+
+
+
+
+
+      // --- Botón para ELIMINAR TODAS las notificaciones ---
+      var btnEliminar = overlay.querySelector('#btn-eliminar-todas');
+      if (btnEliminar) {
+          btnEliminar.addEventListener('click', function(){
+
+              if (!confirm("¿Estás seguro de eliminar TODAS las notificaciones?")) {
+                  return;
+              }
+
+              fetch('{{ url_for("notificaciones_cuadro_bp.eliminar_todas") }}', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-Requested-With': 'fetch'
+                  }
+              })
+              .then(resp => resp.json())
+              .then(data => {
+                  if (data.ok) {
+
+                      // ✔️ Vaciar visualmente la lista
+                      const list = overlay.querySelector('.notif-list');
+                      list.innerHTML = `
+                          <p class="notif-empty">No hay notificaciones por mostrar.</p>
+                      `;
+                  } else {
+                      console.error("Error al eliminar todas:", data);
+                  }
+              })
+              .catch(err => console.error("Error de red:", err));
+          });
+      }
+
+
+
+
+  };
+</script>

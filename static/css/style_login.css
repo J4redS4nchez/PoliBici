@@ -1,0 +1,225 @@
+/* ====== Variables y base ====== */
+:root{
+  --guinda:#7a003c;
+  --fondo:#f0f2f5;
+  --texto:#1c1e21;
+  --borde:#dddfe2;
+  --ok:#0f9d58;
+  --error:#b00020;
+}
+
+*,
+*::before,
+*::after{box-sizing:border-box}
+
+html,body{
+  height:100%;
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  color:var(--texto);
+  background:var(--fondo);
+}
+
+/* ====== Layout general ====== */
+.layout{
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+  grid-template-columns:1fr;
+  gap:2rem;
+  padding:2rem;
+}
+@media (min-width:960px){
+  .layout{ grid-template-columns: 1.2fr 1fr; }
+}
+
+/* ====== Marca ====== */
+.brand .logo{
+  font-size:clamp(2.4rem,6vw,4rem);
+  font-weight:800;
+  letter-spacing:.5px;
+  color:var(--guinda);
+  margin:0 0 .5rem;
+}
+.brand .slogan{
+  font-size:1.25rem;
+  line-height:1.35;
+  max-width:34ch;
+  margin:0;
+}
+
+/* ====== Tarjeta de login ====== */
+.card-login{
+  width:min(420px,92vw);
+  background:#fff;
+  border:1px solid var(--borde);
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+
+/* Slot fijo para mensajes: reserva espacio estable */
+.flash-slot{
+  min-height:56px;          /* ← misma altura arriba/abajo */
+  display:flex;
+  align-items:flex-start;
+}
+
+/* ====== Inputs y botón ====== */
+.campo{margin-bottom:12px}
+.campo input{
+  width:100%;
+  padding:14px 12px;
+  border:1px solid var(--borde);
+  border-radius:10px;
+  font-size:16px;
+  outline:none;
+  background:#fff;
+  color:var(--texto);
+}
+.campo input::placeholder{color:#7a7a7a}
+.campo input:focus{
+  border-color:var(--guinda);
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--guinda) 20%, transparent);
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  border:0;
+  border-radius:10px;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+  transition:transform .02s ease, filter .15s ease, opacity .15s ease;
+}
+.btn:active{ transform:translateY(1px); }
+.btn-guinda{ background:var(--guinda); color:#fff; }
+.btn-guinda:hover{ filter:brightness(1.05); }
+.btn-guinda:disabled{ filter:saturate(.6) brightness(.9); cursor:not-allowed; }
+
+/* ====== Acciones secundarias ====== */
+.acciones-secundarias{
+  text-align:center;
+  margin-top:12px;
+}
+.acciones-secundarias a{
+  color:var(--guinda);
+  text-decoration:none;
+  font-size:14px;
+}
+.acciones-secundarias a:hover{ text-decoration:underline; }
+
+/* ====== Mensaje flash (solo uno) ====== */
+.flash{
+  padding:10px 12px;
+  border-radius:10px;
+  margin:0 0 8px 0;
+  font-size:14px;
+  border:1px solid transparent;
+  transition: opacity .4s ease, transform .4s ease;
+}
+.flash.ok{
+  background:#e8f5ec;
+  color:var(--ok);
+  border-color:#c6e8d2;
+}
+.flash.error{
+  background:#fdeaea;
+  color:var(--error);
+  border-color:#f3c4c4;
+}
+/* Animación de salida */
+.flash.is-hiding{
+  opacity:0;
+  transform:translateY(-6px);
+}
+
+/* ====== Accesibilidad ====== */
+@media (prefers-reduced-motion:reduce){
+  .btn, .flash{ transition:none; }
+}
+
+/* ===================================================================
+   RESPONSIVIDAD EXTRA
+   - Ajustes para móviles pequeños y pantallas con poca altura
+   =================================================================== */
+
+/* Móviles / tablets (anchos menores a 768px) */
+@media (max-width: 768px){
+  .layout{
+    padding:1.5rem 1rem;
+    /* Evita que todo quede demasiado pegado a los bordes */
+  }
+
+  .brand{
+    text-align:center;
+  }
+
+  .brand .slogan{
+    font-size:1rem;
+    max-width:26ch;
+    margin-inline:auto;
+  }
+
+  .card-login{
+    width:100%;
+    max-width:380px;
+    padding:14px;
+  }
+}
+
+/* Móviles muy pequeños (anchos menores a 480px) */
+@media (max-width: 480px){
+  .layout{
+    padding:1.25rem 0.75rem;
+  }
+
+  .brand .logo{
+    font-size:2.1rem; /* un poco más pequeño para caber mejor */
+  }
+
+  .brand .slogan{
+    font-size:0.95rem;
+  }
+
+  .card-login{
+    border-radius:10px;
+    padding:12px;
+    box-shadow:0 4px 16px rgba(0,0,0,.06);
+  }
+
+  .campo input{
+    padding:12px 10px;
+    font-size:15px;
+  }
+
+  .btn{
+    padding:11px;
+    font-size:15px;
+  }
+}
+
+/* Pantallas con poca altura (por ejemplo, celular en horizontal) */
+@media (max-height: 600px) and (orientation: landscape){
+  .layout{
+    min-height:auto;
+    padding:1rem;
+    align-content:flex-start; /* que suba el contenido y no quede cortado */
+    row-gap:1rem;
+  }
+
+  .brand .logo{
+    font-size:1.8rem;
+    margin-bottom:0.25rem;
+  }
+
+  .brand .slogan{
+    font-size:0.9rem;
+    max-width:26ch;
+  }
+
+  .card-login{
+    margin-top:0.5rem;
+  }
+}

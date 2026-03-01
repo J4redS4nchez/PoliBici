@@ -1,0 +1,6 @@
+/* notificaciones.css - estilos para el fragmento de notificaciones */
+.panel-body-placeholder-notif{
+  padding: 2rem;
+  font-size: 1.4rem;
+  color: var(--guinda);
+}

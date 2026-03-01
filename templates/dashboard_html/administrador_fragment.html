@@ -1,0 +1,859 @@
+<!-- Fragmento de Administrador (sin <head>/<body>) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/administrador.css') }}">
+
+<section class="panel card">
+  <header class="card-header">
+    <h2>Acciones del sistema</h2>
+  </header>
+
+  <div class="admin-actions-panel">
+    <div class="admin-action-block">
+      <h3>Respaldo de Datos</h3>
+      <p>Crea una copia de seguridad de toda la información del sistema.</p>
+      <button type="button" class="btn-admin btn-admin-backup">
+        Generar Backup
+      </button>
+    </div>
+
+    <div class="admin-action-block">
+      <h3>Reiniciar Sistema</h3>
+      <p>Reinicia PoliBICI sin borrar datos ni restablecer la configuración.</p>
+      <button type="button" class="btn-admin btn-admin-restart">
+        Reiniciar Sistema
+      </button>
+    </div>
+
+    <div class="admin-action-block admin-action-danger">
+      <h3>Restablecer Sistema</h3>
+      <p class="admin-warning-text">
+        ADVERTENCIA: Esta acción no se puede deshacer.
+      </p>
+      <button type="button" class="btn-admin btn-admin-reset">
+        Restablecer Sistema
+      </button>
+    </div>
+
+</section>
+
+<section class="panel card admin-admins-card">
+  <header class="card-header">
+    <h2>Administradores del sistema</h2>
+
+    <button type="button" class="btn-admin-add">
+      <span class="btn-icon">+</span>
+      &nbsp;Agregar Administrador
+    </button>
+
+  </header>
+
+  <div class="admin-table-wrapper">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>E-mail</th>
+          <th>Último Acceso</th>
+          <th>Teléfono</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if administradores %}
+          {% for admin in administradores %}
+            <tr>
+             
+              <td>
+                {{ "%03d"|format(administradores|length - loop.index0) }}
+              </td>
+
+              <!-- Nombre + Apellido -->
+              <td>
+                {{ (admin.nombre or "") ~ ( " " if admin.apellido else "" ) ~ (admin.apellido or "") }}
+              </td>
+
+              <!-- Correo institucional -->
+              <td>{{ admin.correo_institucional or "" }}</td>
+
+              <!-- Último Acceso -->
+              <td>{{ admin.ultimo_acceso_formateado or "" }}</td>
+
+              <!-- Teléfono -->
+              <td>{{ admin.telefono_plano or "" }}</td>
+
+              <!-- Acciones -->
+              <td>
+                <div class="admin-table-actions">
+                  <button type="button"
+                          class="btn-admin-table btn-admin-edit"
+                          data-admin-id="{{ admin.id }}">
+                    Editar
+                  </button>
+                  <button type="button"
+                          class="btn-admin-table btn-admin-delete"
+                          data-admin-id="{{ admin.id }}">
+                    X
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6">No hay administradores registrados.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+
+    </table>
+  </div>
+</section>
+
+<!-- MODAL EDITAR ADMINISTRADOR (mismo estilo que modal de usuarios) -->
+<div class="admin-modal-overlay" id="modal-editar-admin" hidden>
+  <div class="admin-modal">
+    <!-- Header -->
+    <div class="admin-modal-header">
+      <div class="admin-modal-title">
+        <h2>Editar Administrador</h2>
+      </div>
+      <button type="button" class="admin-modal-close" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <!-- Cuerpo -->
+    <div class="admin-modal-body">
+      <!-- Fila 1: No. Empleado / Correo -->
+      <div class="admin-modal-row admin-modal-row-2col">
+        <div class="admin-field">
+          <label>No. Empleado</label>
+          <input type="text" name="no_empleado" placeholder="Ej. 123456">
+        </div>
+        <div class="admin-field">
+          <label>Correo institucional</label>
+          <input type="email" name="correo_institucional" placeholder="admin@ipn.mx">
+        </div>
+      </div>
+
+      <!-- Fila 2: Nombre / Apellido -->
+      <div class="admin-modal-row admin-modal-row-2col">
+        <div class="admin-field">
+          <label>Nombre</label>
+          <input type="text" name="nombre" placeholder="Nombre">
+        </div>
+        <div class="admin-field">
+          <label>Apellido</label>
+          <input type="text" name="apellido" placeholder="Apellido">
+        </div>
+      </div>
+
+      <!-- Fila 3: Teléfono / Contraseña -->
+      <div class="admin-modal-row admin-modal-row-2col">
+        <div class="admin-field">
+          <label>Teléfono</label>
+          <input type="tel" name="telefono" placeholder="55 0000 0000">
+        </div>
+        <div class="admin-field">
+          <label>Contraseña</label>
+          <input type="password" name="contrasena" placeholder="••••••">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="admin-modal-footer">
+      <button type="button" class="btn-modal-save">Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR ADMINISTRADOR (mismo estilo, sin switch) -->
+<div class="admin-modal-overlay" id="modal-agregar-admin" hidden>
+  <div class="admin-modal">
+    <!-- Header -->
+    <div class="admin-modal-header">
+      <div class="admin-modal-title">
+        <h2>Agregar Nuevo Administrador</h2>
+      </div>
+      <button type="button" class="admin-modal-close" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <!-- Cuerpo -->
+    <div class="admin-modal-body">
+      <!-- Fila 1: No. Empleado / Correo -->
+      <div class="admin-modal-row admin-modal-row-2col">
+        <div class="admin-field">
+          <label>No. Empleado</label>
+          <input type="text" name="no_empleado" placeholder="Ingrese el número de empleado">
+        </div>
+        <div class="admin-field">
+          <label>Correo institucional</label>
+          <input type="email" name="correo_institucional" placeholder="admin@ipn.mx">
+        </div>
+      </div>
+
+      <!-- Fila 2: Nombre / Apellido -->
+      <div class="admin-modal-row admin-modal-row-2col">
+        <div class="admin-field">
+          <label>Nombre</label>
+          <input type="text" name="nombre" placeholder="Ingrese el nombre">
+        </div>
+        <div class="admin-field">
+          <label>Apellido</label>
+          <input type="text" name="apellido" placeholder="Ingrese el apellido">
+        </div>
+      </div>
+
+      <!-- Fila 3: Teléfono / Contraseña -->
+      <div class="admin-modal-row admin-modal-row-2col">
+        <div class="admin-field">
+          <label>Teléfono</label>
+          <input type="tel" name="telefono" placeholder="55 0000 0000">
+        </div>
+        <div class="admin-field">
+          <label>Contraseña</label>
+          <input type="password" name="contrasena" placeholder="••••••">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="admin-modal-footer">
+      <button type="button" class="btn-modal-save">Guardar Administrador</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR EDICIÓN DE ADMINISTRADOR -->
+<div class="admin-modal-overlay" id="modal-confirmar-edicion" hidden>
+  <div class="admin-modal admin-modal-small">
+    <div class="admin-modal-header">
+      <div class="admin-modal-title">
+        <h2>Editar Administrador</h2>
+      </div>
+      <button type="button" class="admin-modal-close" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <div class="admin-modal-body">
+      <p class="admin-confirm-text">
+        Para editar la información de este administrador, el administrador del cual se va a editar la información debe agregar su contraseña
+      </p>
+
+      <div class="admin-modal-row">
+          <div class="admin-field">
+            <label>Contraseña</label>
+            <input type="password"
+                   name="contrasena_confirmacion_editar"
+                   placeholder="••••••">
+            <!-- Mensaje de error -->
+            <p class="admin-error-text" id="error-editar-admin" style="display:none;"></p>
+          </div>
+      </div>
+    </div>
+
+    <div class="admin-modal-footer">
+      <button type="button" class="btn-modal-save btn-modal-confirm-edit">
+        Confirmar edición
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ELIMINAR ADMINISTRADOR (confirmación con contraseña) -->
+<div class="admin-modal-overlay" id="modal-eliminar-admin" hidden>
+  <div class="admin-modal admin-modal-small">
+    <!-- Header -->
+    <div class="admin-modal-header">
+      <div class="admin-modal-title">
+        <h2>Eliminar Administrador</h2>
+      </div>
+      <button type="button" class="admin-modal-close" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <!-- Cuerpo -->
+    <div class="admin-modal-body">
+      <p class="admin-delete-text">
+        Para eliminar este administrador, el administrador el cual se desea eliminar debe agregar su contraseña.
+      </p>
+
+      <div class="admin-modal-row">
+        <div class="admin-field">
+          <label>Contraseña</label>
+          <input type="password" name="contrasena_confirmacion" placeholder="••••••">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="admin-modal-footer">
+      <button type="button" class="btn-modal-save btn-modal-confirm-delete">
+        Confirmar eliminación
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESTABLECER SISTEMA -->
+<div class="admin-modal-overlay" id="modal-restablecer-sistema" hidden>
+  <div class="admin-modal admin-modal-small">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title">
+          <!-- Switch del modal Restablecer sistema -->
+          <label class="admin-switch admin-switch-reset">
+            <input type="checkbox" id="switch-restablecer-sistema">
+            <span class="admin-switch-slider"></span>
+          </label>
+
+          <h2>Restablecer sistema</h2>
+        </div>
+        <button type="button" class="admin-modal-close" aria-label="Cerrar">&times;</button>
+      </div>
+
+
+      <div class="admin-modal-body">
+        <p class="admin-reset-text">
+          ¿Seguro que quieres restablecer el sistema desde la copia de seguridad?<br>
+          <span class="admin-reset-danger">Esta operación no se puede deshacer.</span>
+        </p>
+      </div>
+
+
+
+
+    <div class="admin-modal-footer">
+      <button type="button" class="btn-modal-save btn-modal-confirm-reset">
+        Confirmar restablecimiento
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const body              = document.body;
+    const overlayEdit       = document.getElementById('modal-editar-admin');
+    const overlayAdd        = document.getElementById('modal-agregar-admin');
+    const overlayDelete     = document.getElementById('modal-eliminar-admin');
+    const overlayEditConfirm= document.getElementById('modal-confirmar-edicion');
+    const overlayReset      = document.getElementById('modal-restablecer-sistema');
+
+    let adminIdSeleccionado = null;
+
+    function openOverlay(ov){
+      if (!ov) return;
+      ov.removeAttribute('hidden');
+      body.classList.add('no-scroll');
+    }
+
+    function closeOverlay(ov){
+      if (!ov) return;
+      ov.setAttribute('hidden', '');
+
+      const editHidden        = !overlayEdit        || overlayEdit.hasAttribute('hidden');
+      const addHidden         = !overlayAdd         || overlayAdd.hasAttribute('hidden');
+      const deleteHidden      = !overlayDelete      || overlayDelete.hasAttribute('hidden');
+      const editConfirmHidden = !overlayEditConfirm || overlayEditConfirm.hasAttribute('hidden');
+      const resetHidden       = !overlayReset       || overlayReset.hasAttribute('hidden');
+
+      if (editHidden && addHidden && deleteHidden && editConfirmHidden && resetHidden){
+        body.classList.remove('no-scroll');
+      }
+    }
+
+    /* -------- MODAL CONFIRMAR EDICIÓN (se abre al presionar Editar) -------- */
+    if (overlayEditConfirm){
+      const openEditBtns     = document.querySelectorAll('.admin-table .btn-admin-edit');
+      const closeConfirmBtns = overlayEditConfirm.querySelectorAll('.admin-modal-close, .btn-modal-cancel');
+      const confirmEditBtn   = overlayEditConfirm.querySelector('.btn-modal-confirm-edit');
+      const passwordInput    = overlayEditConfirm.querySelector('input[name="contrasena_confirmacion_editar"]');
+
+      // Al hacer clic en Editar -> guardar id y pedir contraseña
+      openEditBtns.forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          adminIdSeleccionado = btn.dataset.adminId || null;
+
+          if (passwordInput){
+            passwordInput.value = "";
+          }
+
+          openOverlay(overlayEditConfirm);
+        });
+      });
+
+      // Cerrar confirmación con X o Cancelar
+      closeConfirmBtns.forEach(btn => {
+        btn.addEventListener('click', () => closeOverlay(overlayEditConfirm));
+      });
+
+      // Confirmar edición: validar contraseña en el backend y luego cargar datos
+      if (confirmEditBtn){
+        confirmEditBtn.addEventListener('click', () => {
+          const contrasena = passwordInput ? passwordInput.value.trim() : "";
+
+          if (!adminIdSeleccionado){
+            alert("No se pudo identificar al administrador.");
+            return;
+          }
+
+          // 1) Validar contraseña
+          fetch("{{ url_for('administrador_bp.api_validar_contrasena') }}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "fetch"
+            },
+            body: JSON.stringify({
+              admin_id: adminIdSeleccionado,
+              contrasena: contrasena
+            })
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (!data.ok){
+              alert(data.error || "Contraseña incorrecta.");
+              return;
+            }
+
+            // 2) Si la contraseña es correcta, pedir DETALLE para rellenar el modal
+            return fetch("{{ url_for('administrador_bp.api_detalle') }}", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "fetch"
+              },
+              body: JSON.stringify({ admin_id: adminIdSeleccionado })
+            });
+          })
+          .then(r => r ? r.json() : null)
+          .then(det => {
+            if (!det) return; // ya se manejó el error antes
+
+            if (!det.ok){
+              alert(det.error || "No se pudieron cargar los datos del administrador.");
+              return;
+            }
+
+            const info = det.admin || {};
+
+            // 3) Rellenar inputs del modal de edición con los datos descifrados
+            if (overlayEdit){
+              const inpNoEmpleado = overlayEdit.querySelector('input[name="no_empleado"]');
+              const inpCorreo     = overlayEdit.querySelector('input[name="correo_institucional"]');
+              const inpNombre     = overlayEdit.querySelector('input[name="nombre"]');
+              const inpApellido   = overlayEdit.querySelector('input[name="apellido"]');
+              const inpTelefono   = overlayEdit.querySelector('input[name="telefono"]');
+              const inpPass       = overlayEdit.querySelector('input[name="contrasena"]');
+
+              if (inpNoEmpleado) inpNoEmpleado.value = info.no_empleado || "";
+              if (inpCorreo)     inpCorreo.value     = info.correo_institucional || "";
+              if (inpNombre)     inpNombre.value     = info.nombre || "";
+              if (inpApellido)   inpApellido.value   = info.apellido || "";
+              if (inpTelefono)   inpTelefono.value   = info.telefono || "";
+              if (inpPass)       inpPass.value       = info.contrasena || "";
+            }
+
+            // 4) Cerrar el modal de confirmación y abrir el de edición
+            closeOverlay(overlayEditConfirm);
+            openOverlay(overlayEdit);
+          })
+          .catch(err => {
+            console.error(err);
+            alert("Ocurrió un error al validar/cargar los datos del administrador.");
+          });
+        });
+      }
+
+      // Cerrar si clic en fondo oscuro
+      overlayEditConfirm.addEventListener('click', e => {
+        if (e.target === overlayEditConfirm) closeOverlay(overlayEditConfirm);
+      });
+    }
+
+    /* -------- MODAL EDITAR ADMINISTRADOR (solo se abre después de confirmar) -------- */
+    if (overlayEdit){
+      // Solo cierran el modal: X y (si la tuvieras) .btn-modal-cancel
+      const closeEditBtns = overlayEdit.querySelectorAll('.admin-modal-close, .btn-modal-cancel');
+      closeEditBtns.forEach(btn => {
+        btn.addEventListener('click', () => closeOverlay(overlayEdit));
+      });
+
+      // Botón "Guardar Cambios"
+      const btnGuardar = overlayEdit.querySelector('.btn-modal-save');
+
+      if (btnGuardar){
+        btnGuardar.addEventListener('click', () => {
+          if (!adminIdSeleccionado){
+            alert("No se pudo identificar al administrador a editar.");
+            return;
+          }
+
+          const inpNoEmpleado = overlayEdit.querySelector('input[name="no_empleado"]');
+          const inpCorreo     = overlayEdit.querySelector('input[name="correo_institucional"]');
+          const inpNombre     = overlayEdit.querySelector('input[name="nombre"]');
+          const inpApellido   = overlayEdit.querySelector('input[name="apellido"]');
+          const inpTelefono   = overlayEdit.querySelector('input[name="telefono"]');
+          const inpPass       = overlayEdit.querySelector('input[name="contrasena"]');
+
+          const payload = {
+            admin_id: adminIdSeleccionado,
+            no_empleado:          inpNoEmpleado ? inpNoEmpleado.value.trim()          : "",
+            correo_institucional: inpCorreo     ? inpCorreo.value.trim()              : "",
+            nombre:               inpNombre     ? inpNombre.value.trim()              : "",
+            apellido:             inpApellido   ? inpApellido.value.trim()            : "",
+            telefono:             inpTelefono   ? inpTelefono.value.trim()            : "",
+            contrasena:           inpPass       ? inpPass.value.trim()                : ""
+          };
+
+          fetch("{{ url_for('administrador_bp.api_actualizar_administrador') }}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "fetch"
+            },
+            body: JSON.stringify(payload)
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (!data.ok){
+              alert(data.error || "No se pudieron guardar los cambios.");
+              return;
+            }
+
+            // Cerrar modal
+            closeOverlay(overlayEdit);
+
+            // Volver a cargar SOLO el fragmento de Configuración
+            const linkConfig = document.querySelector(
+              '.nav-link[data-fragment="{{ url_for("administrador_bp.fragment") }}"]'
+            );
+
+            if (linkConfig && typeof cargarFragmento === "function"){
+              cargarFragmento(linkConfig);
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert("Ocurrió un error al guardar los cambios del administrador.");
+          });
+        });
+      }
+
+      overlayEdit.addEventListener('click', e => {
+        if (e.target === overlayEdit) closeOverlay(overlayEdit);
+      });
+    }
+
+    /* -------- MODAL AGREGAR ADMINISTRADOR -------- */
+    if (overlayAdd){
+      const openAddBtn    = document.querySelector('.btn-admin-add');
+      const closeAddBtns  = overlayAdd.querySelectorAll('.admin-modal-close, .btn-modal-cancel');
+      const btnGuardarAdd = overlayAdd.querySelector('.btn-modal-save');
+
+      if (openAddBtn){
+        openAddBtn.addEventListener('click', e => {
+          e.preventDefault();
+
+          // Limpiar campos cada vez que se abre
+          const inpNoEmpleado = overlayAdd.querySelector('input[name="no_empleado"]');
+          const inpCorreo     = overlayAdd.querySelector('input[name="correo_institucional"]');
+          const inpNombre     = overlayAdd.querySelector('input[name="nombre"]');
+          const inpApellido   = overlayAdd.querySelector('input[name="apellido"]');
+          const inpTelefono   = overlayAdd.querySelector('input[name="telefono"]');
+          const inpPass       = overlayAdd.querySelector('input[name="contrasena"]');
+
+          if (inpNoEmpleado) inpNoEmpleado.value = "";
+          if (inpCorreo)     inpCorreo.value     = "";
+          if (inpNombre)     inpNombre.value     = "";
+          if (inpApellido)   inpApellido.value   = "";
+          if (inpTelefono)   inpTelefono.value   = "";
+          if (inpPass)       inpPass.value       = "";
+
+          openOverlay(overlayAdd);
+        });
+      }
+
+      // Cerrar con la X o botón cancelar (si en un futuro lo agregas)
+      closeAddBtns.forEach(btn => {
+        btn.addEventListener('click', () => closeOverlay(overlayAdd));
+      });
+
+      // Guardar administrador -> enviar al backend
+      if (btnGuardarAdd){
+        btnGuardarAdd.addEventListener('click', () => {
+          const inpNoEmpleado = overlayAdd.querySelector('input[name="no_empleado"]');
+          const inpCorreo     = overlayAdd.querySelector('input[name="correo_institucional"]');
+          const inpNombre     = overlayAdd.querySelector('input[name="nombre"]');
+          const inpApellido   = overlayAdd.querySelector('input[name="apellido"]');
+          const inpTelefono   = overlayAdd.querySelector('input[name="telefono"]');
+          const inpPass       = overlayAdd.querySelector('input[name="contrasena"]');
+
+          const payload = {
+            no_empleado:          inpNoEmpleado ? inpNoEmpleado.value.trim()          : "",
+            correo_institucional: inpCorreo     ? inpCorreo.value.trim()              : "",
+            nombre:               inpNombre     ? inpNombre.value.trim()              : "",
+            apellido:             inpApellido   ? inpApellido.value.trim()            : "",
+            telefono:             inpTelefono   ? inpTelefono.value.trim()            : "",
+            contrasena:           inpPass       ? inpPass.value.trim()                : ""
+          };
+
+          fetch("{{ url_for('administrador_bp.api_agregar_administrador') }}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "fetch"
+            },
+            body: JSON.stringify(payload)
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (!data.ok){
+              alert(data.error || "No se pudo guardar el administrador.");
+              return;
+            }
+
+            // Cerrar modal
+            closeOverlay(overlayAdd);
+
+            // Recargar SOLO el fragmento de Configuración (sigue en la misma opción)
+            const linkConfig = document.querySelector(
+              '.nav-link[data-fragment="{{ url_for("administrador_bp.fragment") }}"]'
+            );
+
+            if (linkConfig && typeof cargarFragmento === "function"){
+              cargarFragmento(linkConfig);
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert("Ocurrió un error al guardar el administrador.");
+          });
+        });
+      }
+
+      overlayAdd.addEventListener('click', e => {
+        if (e.target === overlayAdd) closeOverlay(overlayAdd);
+      });
+    }
+
+
+    /* -------- MODAL ELIMINAR ADMINISTRADOR -------- */
+    if (overlayDelete){
+      const openDeleteBtns   = document.querySelectorAll('.admin-table .btn-admin-delete');
+      const closeDeleteBtns  = overlayDelete.querySelectorAll('.admin-modal-close, .btn-modal-cancel');
+      const confirmDeleteBtn = overlayDelete.querySelector('.btn-modal-confirm-delete');
+      const passwordDelete   = overlayDelete.querySelector('input[name="contrasena_confirmacion"]');
+
+      openDeleteBtns.forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          adminIdSeleccionado = btn.dataset.adminId || null;
+
+          if (passwordDelete){
+            passwordDelete.value = "";
+          }
+
+          openOverlay(overlayDelete);
+        });
+      });
+
+      closeDeleteBtns.forEach(btn => {
+        btn.addEventListener('click', () => closeOverlay(overlayDelete));
+      });
+
+      if (confirmDeleteBtn){
+        confirmDeleteBtn.addEventListener('click', () => {
+          if (!adminIdSeleccionado){
+            alert("No se pudo identificar al administrador a eliminar.");
+            return;
+          }
+
+          const contrasena = passwordDelete ? passwordDelete.value.trim() : "";
+          if (!contrasena){
+            alert("Por favor ingresa la contraseña.");
+            return;
+          }
+
+          fetch("{{ url_for('administrador_bp.api_eliminar_administrador') }}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "fetch"
+            },
+            body: JSON.stringify({
+              admin_id: adminIdSeleccionado,
+              contrasena: contrasena
+            })
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (!data.ok){
+              alert(data.error || "No se pudo eliminar al administrador.");
+              return;
+            }
+
+            closeOverlay(overlayDelete);
+
+            const linkConfig = document.querySelector(
+              '.nav-link[data-fragment="{{ url_for("administrador_bp.fragment") }}"]'
+            );
+
+            if (linkConfig && typeof cargarFragmento === "function"){
+              cargarFragmento(linkConfig);
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert("Ocurrió un error al eliminar al administrador.");
+          });
+        });
+      }
+
+      overlayDelete.addEventListener('click', e => {
+        if (e.target === overlayDelete) closeOverlay(overlayDelete);
+      });
+    }
+
+    /* -------- MODAL RESTABLECER SISTEMA -------- */
+    if (overlayReset){
+      const openResetBtn   = document.querySelector('.btn-admin-reset');
+      const closeResetBtns = overlayReset.querySelectorAll('.admin-modal-close');
+      const confirmResetBtn = overlayReset.querySelector('.btn-modal-confirm-reset');
+      const switchReset    = document.getElementById('switch-restablecer-sistema');
+      const resetText      = overlayReset.querySelector('.admin-reset-text');
+      const resetTitle     = overlayReset.querySelector('.admin-modal-title h2');
+
+      function actualizarTextoReset(){
+        if (!resetText || !switchReset) return;
+
+        // Cambiar título según estado del switch
+        if (resetTitle){
+          if (switchReset.checked){
+            resetTitle.textContent = 'Restablecer Sistema desde Cero';
+          } else {
+            resetTitle.textContent = 'Restablecer Sistema desde Copia de Seguridad';
+          }
+        }
+
+        // Cambiar texto descriptivo (con la frase roja)
+        if (switchReset.checked){
+          resetText.innerHTML =
+            '¿Seguro que quieres restablecer el sistema desde cero (0)?<br>' +
+            '<span class="admin-reset-danger">Esta operación no se puede deshacer.</span>';
+        } else {
+          resetText.innerHTML =
+            '¿Seguro que quieres restablecer el sistema desde la copia de seguridad?<br>' +
+            '<span class="admin-reset-danger">Esta operación no se puede deshacer.</span>';
+        }
+      }
+
+      if (switchReset){
+        switchReset.addEventListener('change', actualizarTextoReset);
+      }
+
+      if (openResetBtn){
+        openResetBtn.addEventListener('click', e => {
+          e.preventDefault();
+
+          // Siempre abrimos con el switch apagado (desde copia de seguridad)
+          if (switchReset){
+            switchReset.checked = false;
+          }
+          actualizarTextoReset();
+
+          openOverlay(overlayReset);
+        });
+      }
+
+      // Cerrar con la X
+      closeResetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          closeOverlay(overlayReset);
+        });
+      });
+
+      // Confirmar restablecimiento
+      if (confirmResetBtn){
+        confirmResetBtn.addEventListener('click', () => {
+          // Decidimos el modo según el estado del switch:
+          // - apagado  -> copia de seguridad
+          // - encendido -> desde cero
+          const modo = (switchReset && switchReset.checked) ? "cero" : "copia";
+
+          fetch("{{ url_for('administrador_bp.api_restablecer_sistema') }}", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "fetch"
+            },
+            body: JSON.stringify({ modo: modo })
+          })
+          .then(r => r.json())
+          .then(data => {
+            if (!data || data.ok !== true) {
+              console.error(data && data.error ? data.error : "Error al restablecer el sistema.");
+              alert(data && data.error ? data.error : "Ocurrió un error al restablecer el sistema.");
+              return;
+            }
+
+            // ÉXITO: cerrar modal y recargar el fragmento de Configuración
+            closeOverlay(overlayReset);
+
+            const linkConfig = document.querySelector(
+              '.nav-link[data-fragment="{{ url_for("administrador_bp.fragment") }}"]'
+            );
+            if (linkConfig && typeof cargarFragmento === "function") {
+              cargarFragmento(linkConfig);
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert("Ocurrió un error al restablecer el sistema.");
+          });
+        });
+      }
+
+
+      // Cerrar si se hace clic en el fondo oscuro
+      overlayReset.addEventListener('click', e => {
+        if (e.target === overlayReset) closeOverlay(overlayReset);
+      });
+    }
+
+
+
+
+    /* -------- GENERAR BACKUP (JSON en carpeta instance) -------- */
+    const backupBtn = document.querySelector('.btn-admin-backup');
+    if (backupBtn) {
+      backupBtn.addEventListener('click', () => {
+        fetch("{{ url_for('administrador_bp.api_generar_backup') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "fetch"
+          },
+          body: JSON.stringify({})
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (!data || data.ok !== true) {
+            console.error(data && data.error ? data.error : "Error al generar el backup.");
+            alert(data && data.error ? data.error : "Ocurrió un error al generar el backup.");
+            return;
+          }
+
+          // Éxito: solo avisamos que se generó el respaldo
+          alert("El respaldo se generó correctamente en la carpeta 'instance' (archivos JSON).");
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Ocurrió un error al generar el backup.");
+        });
+      });
+    }
+
+
+
+  })();
+</script>

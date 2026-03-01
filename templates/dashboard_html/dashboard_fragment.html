@@ -1,0 +1,261 @@
+<!-- Fragmento del Dashboard (sin <head>/<body>) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/dashboard.css') }}">
+
+<!-- ===== Tarjetas KPI ===== -->
+<section class="kpis">
+  <article class="kpi kpi-ok">
+    <div class="kpi-num" id="kpi-docks-total">0</div>
+    <div class="kpi-label">Docks Disponibles</div>
+  </article>
+
+  <article class="kpi kpi-warn">
+    <div class="kpi-num" id="kpi-docks-uso">0</div>
+    <div class="kpi-label">Docks en Uso</div>
+  </article>
+
+  <article class="kpi kpi-danger">
+    <div class="kpi-num" id="kpi-docks-fallas">0</div>
+    <div class="kpi-label">Docks con Fallas</div>
+  </article>
+
+  <article class="kpi kpi-alert">
+    <div class="kpi-num" id="kpi-usuarios-bloqueados">0</div>
+    <div class="kpi-label">Usuarios Bloqueados</div>
+  </article>
+</section>
+
+<!-- ===== Estado de los Docks ===== -->
+<section class="panel card">
+  <header class="card-header">
+    <h2>Estado de los Docks</h2>
+  </header>
+
+  <div class="dock-grid" id="dock-grid"></div>
+</section>
+
+
+<!-- ===== Usuarios Registrados / Historial ===== -->
+<section class="panel card">
+  <header class="card-header">
+    <h2>Historial</h2>
+  </header>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Dock</th>
+          <th>Fecha</th>
+          <th>Hora Entrada</th>
+          <th>Hora Salida</th>
+          <th>Tiempo Total</th>
+          <th>Tipo</th>
+          <th>Nombre</th>
+          <th>Credencial</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="historial-body">
+        <!-- Aquí se inyectarán las filas desde la BD -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  // Renderizar tabla de historial desde la BD
+  function renderHistorial(){
+    const tbody = document.getElementById('historial-body');
+    if (!tbody) return;
+
+    fetch("{{ url_for('dashboard_bp.api_historial_list') }}", { cache: "no-store" })
+      .then(r => r.json())
+      .then(({ items }) => {
+        tbody.innerHTML = "";
+        if (!Array.isArray(items)) return;
+
+        items.forEach(row => {
+          const tr = document.createElement('tr');
+
+          const accionRaw = (row.accion || '').toLowerCase();
+          let accionTexto = '';
+          let accionClase = '';
+
+          if (accionRaw === 'entrada') {
+            // Chip verde: Ingreso
+            accionTexto = 'Ingreso';
+            accionClase = 'tag tag-ingreso';
+          } else if (accionRaw === 'salida') {
+            // Chip rojo: Desocupó
+            accionTexto = 'Desocupó';
+            accionClase = 'tag tag-desocupo';
+          } else if (row.accion) {
+            // Cualquier otro valor, chip neutro
+            accionTexto = row.accion;
+            accionClase = 'tag';
+          }
+
+
+
+
+
+          const fechaRaw = row.fecha || '';
+          let fechaFormateada = fechaRaw;
+
+          if (fechaRaw) {
+            const partes = fechaRaw.split('-'); // [año, mes, día]
+            if (partes.length === 3) {
+              const anio = partes[0];
+              const mes  = parseInt(partes[1], 10); // 1–12
+              const dia  = parseInt(partes[2], 10); // 1–31
+              if (!isNaN(dia) && !isNaN(mes)) {
+                fechaFormateada = `${dia}/${mes}/${anio}`;
+              }
+            }
+          }
+
+
+
+
+                    // --- FORMATEO DE HORAS (HH:MM:SS -> HH:MM hrs.) ---
+          function formatearHora(horaRaw) {
+            if (!horaRaw) return '';
+            const partes = horaRaw.split(':'); // [hora, minuto, segundo]
+            if (partes.length >= 2) {
+              const hh = partes[0].padStart(2, '0');
+              const mm = partes[1].padStart(2, '0');
+              return `${hh}:${mm} hrs.`;
+            }
+            return horaRaw; // por si viene en otro formato
+          }
+
+            const horaEntradaFmt = formatearHora(row.hora_entrada);
+            const horaSalidaFmt  = formatearHora(row.hora_salida);
+
+            // --- TIEMPO TOTAL: número de minutos -> "X minutos" ---
+            let tiempoTotalFmt = '';
+            const tiempoRaw = row.tiempo_total;
+
+            if (tiempoRaw !== null && tiempoRaw !== undefined && tiempoRaw !== '') {
+              const minutos = parseInt(tiempoRaw, 10);
+              if (!isNaN(minutos)) {
+                // si quieres plural bien: 1 minuto / 2 minutos
+                const sufijo = (minutos === 1) ? ' minuto' : ' minutos';
+                tiempoTotalFmt = `${minutos}${sufijo}`;
+              } else {
+                // fallback por si viene algo raro
+                tiempoTotalFmt = tiempoRaw;
+              }
+            }
+
+
+
+
+
+                    // --- PASTILLA DE TIPO (Alumno / Profesor) ---
+          const tipoRaw = (row.tipo || '').toLowerCase();
+          let tipoHtml = row.tipo || '';
+
+          if (tipoRaw === 'alumno') {
+            tipoHtml = '<span class="tipo-pill tipo-alumno">Alumno</span>';
+          } else if (tipoRaw === 'profesor') {
+            tipoHtml = '<span class="tipo-pill tipo-profesor">Profesor</span>';
+          }
+
+
+
+
+
+          tr.innerHTML = `
+            <td>${row.dock || ''}</td>
+            <td>${fechaFormateada}</td>
+            <td>${horaEntradaFmt}</td>
+            <td>${horaSalidaFmt}</td>
+            <td>${tiempoTotalFmt}</td>
+            <td>${tipoHtml}</td>
+            <td>${row.nombre || ''}</td>
+            <td>${row.boleta || ''}</td>
+            <td class="acciones">
+              ${accionTexto ? `<span class="${accionClase}">${accionTexto}</span>` : ''}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(console.error);
+  }
+
+  // Llamar una vez al cargar el fragmento
+  renderHistorial();
+</script>
+
+
+
+
+
+<!-- Script: genera los cuadros según la cantidad de docks registrados -->
+<script>
+  // Función global para poder llamarla también desde panel_control
+  function renderDockCards(){
+    const grid = document.getElementById('dock-grid');
+    if (!grid) return;
+
+    fetch("{{ url_for('dashboard_bp.api_docks_list') }}", { cache: "no-store" })
+      .then(r => r.json())
+      .then(({ docks }) => {
+        grid.innerHTML = "";
+        if (!Array.isArray(docks)) return;
+
+        docks.forEach(dock => {
+          const card = document.createElement('article');
+          card.className = 'dock-card';
+
+          const status = (dock.status || '').toLowerCase();
+          const estado = (dock.estado || '').toLowerCase();
+
+          let textoEstado = 'Disponible';
+          let claseBadge  = 'badge ok';
+
+          if (status === 'inactivo') {
+            textoEstado = 'Falla';
+            claseBadge  = 'badge danger';
+          } else if (estado === 'ocupado') {
+            textoEstado = 'En Uso';
+            claseBadge  = 'badge warn';
+          }
+
+          card.innerHTML = `
+            <h3>Dock ${dock.id}</h3>
+            <span class="${claseBadge}">${textoEstado}</span>
+          `;
+          grid.appendChild(card);
+        });
+      })
+      .catch(console.error);
+  }
+
+  // Primera renderización al cargar el fragmento
+  renderDockCards();
+</script>
+
+
+
+
+
+
+<!-- Script: tarjetas -->
+
+<script>
+  (function cargarKpiDocks(){
+    const el = document.getElementById("kpi-docks-total");
+    if (!el) return;
+
+    fetch("{{ url_for('dashboard_bp.api_docks_count') }}", { cache: "no-store" })
+      .then(r => r.json())
+      .then(({ total }) => {
+        el.textContent = (typeof total === 'number') ? total : 0;
+      })
+      .catch(console.error);
+  })();
+</script>
+

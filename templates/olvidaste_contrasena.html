@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+
+  <title>PoliBICI – Recuperar acceso</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_olvidaste_contrasena.css') }}">
+</head>
+<body>
+  <!-- Barra superior con login compacto -->
+  <header class="topbar" role="banner">
+    <a class="brand-link" href="{{ url_for('login') }}"><span class="brand">PoliBICI</span></a>
+
+    <form class="topbar-form" method="post" action="{{ url_for('login') }}" aria-label="Acceso rápido">
+      <label class="sr-only" for="tb-correo">Correo institucional</label>
+      <input id="tb-correo" name="correo" type="email"
+             placeholder="Correo institucional" autocomplete="email" required
+             class="tb-input">
+
+      <label class="sr-only" for="tb-pass">Contraseña</label>
+      <input id="tb-pass" name="contrasena" type="password"
+             placeholder="Contraseña" autocomplete="current-password" required
+             class="tb-input">
+
+      <button class="tb-btn" type="submit">Iniciar sesión</button>
+    </form>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="wrap">
+    <section class="card" aria-label="Recuperar cuenta">
+      <div class="card-header">
+        <h1>Encuentra tu cuenta</h1>
+      </div>
+
+      <div class="card-body">
+        <p>
+          Ingresa tu <strong>correo institucional</strong> para buscar tu cuenta.
+          Si existe, te enviaremos instrucciones para restablecer tu contraseña.
+        </p>
+
+        {% with msgs = get_flashed_messages(with_categories=true) %}
+          {% if msgs %}
+            {% set last = msgs[-1] %}
+            <div class="flash {{ last[0] }}" role="status">{{ last[1] }}</div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- OJO: acción y name del input cambiados -->
+        <form method="post" action="{{ url_for('olvido.enviar_link_reset') }}" novalidate>
+          <div class="form-row">
+            <label for="identificador" class="sr-only">Correo institucional</label>
+            <input
+              id="identificador"
+              name="correo"
+              type="email"
+              class="input"
+              placeholder="Correo institucional"
+              required
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="card-footer">
+            <a class="btn btn-sec" href="{{ url_for('login') }}">Cancelar</a>
+            <button class="btn btn-guinda" type="submit">Buscar</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

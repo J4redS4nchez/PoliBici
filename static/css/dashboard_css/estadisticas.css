@@ -1,0 +1,704 @@
+/* estadisticas.css - estilos específicos para el fragmento de Estadísticas */
+.panel-body-placeholder-estadisticas{
+  padding: 2rem;
+  font-size: 1.4rem;
+  color: var(--guinda);
+}
+
+
+
+
+.estadisticas-contenido {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.pie-usuarios-leyenda {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 0.3rem;
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+}
+
+.leyenda-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Colores que coinciden con la gráfica */
+.leyenda-color-azul {
+  background: #1e88e5;
+}
+
+.leyenda-color-amarillo {
+  background: #fdd835;
+}
+
+
+/* Círculo de pastel con 2 colores: azul y amarillo */
+.pie-usuarios-grafica {
+  --porcentaje-azul: 60;      /* azul 60%, amarillo 40% (valor por defecto) */
+  width: 220px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  position: relative;
+  background: conic-gradient(
+    #1e88e5 0 calc(var(--porcentaje-azul) * 1%),
+    #fdd835 calc(var(--porcentaje-azul) * 1%) 100%
+  );
+}
+
+
+/* Todo guinda cuando no hay usuarios (0% y 0%) */
+.pie-sin-usuarios {
+  background: var(--guinda, #7b1f3b);
+}
+
+
+/* Etiquetas de porcentaje dentro de la gráfica */
+.pie-label {
+  position: absolute;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #000000;  /* valor por defecto, casi no se usa */
+}
+
+/* Porcentaje del área AZUL (Alumnos) → lado derecho del pastel */
+.pie-label-azul {
+  bottom: 22%;
+  right: 18%;
+  color: #ffffff;         /* blanco sobre azul */
+}
+
+/* Porcentaje del área AMARILLA (Profesores) → lado izquierdo */
+.pie-label-amarillo {
+  top: 30%;
+  left: 22%;
+  color: #5a1846;         /* guinda que resalta en amarillo */
+}
+
+/* Centrar el porcentaje cuando es 100% y el otro es 0% */
+.pie-label-center {
+  top: 50%;
+  left: 50%;
+  bottom: auto;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+
+
+
+
+/* Contenedor del cuadro "Registros por Día" */
+.registros-dia-contenido {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Contenedor de la gráfica lineal */
+.grafica-lineal {
+  max-width: 500px;
+  width: 100%;
+}
+
+/* SVG responsivo dentro del contenedor */
+.grafica-lineal-svg {
+  width: 100%;
+  height: auto;
+}
+
+/* Estilo de ejes */
+.eje {
+  stroke: #b0bec5;
+  stroke-width: 1.2;
+}
+
+/* Línea de registros */
+.linea-registros {
+  fill: none;
+  stroke: #1e88e5; /* azul */
+  stroke-width: 2.5;
+}
+
+/* Puntos de la línea */
+.punto-registro {
+  fill: #1e88e5;
+}
+
+/* Etiquetas del eje X (días) */
+.etiqueta-eje-x {
+  font-size: 0.85rem;
+  fill: #37474f;
+  text-anchor: middle;
+}
+
+
+
+
+
+/* Contenedor del cuadro "Tiempo promedio del uso del dock" */
+.tiempo-dock-contenido {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Contenedor general de la gráfica de barras */
+.grafica-barras {
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 220px; /* altura total del área de barras */
+}
+
+/* Cada barra individual */
+.barra {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Rectángulo de la barra */
+.barra-rect {
+  width: 60%;
+  border-radius: 8px 8px 0 0;
+  background: #1e88e5; /* azul PoliBICI */
+}
+
+/* Alturas relativas de cada barra (simplemente visual) */
+.barra-1h {
+  height: 20%;
+}
+
+.barra-2h {
+  height: 40%;
+}
+
+.barra-3h {
+  height: 60%;
+}
+
+.barra-4h {
+  height: 80%;
+}
+
+.barra-5h {
+  height: 100%;
+}
+
+/* Texto debajo de cada barra */
+.barra-label {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+
+
+/* Contenedor de la gráfica de barras de "Registros por Meses" */
+
+
+
+
+
+.barra-mes-rect {
+  width: 55%;
+  border-radius: 8px 8px 0 0;
+  background: var(--guinda); /* color guinda del sistema */
+}
+
+
+/* Alturas (ejemplo visual, puedes cambiarlas si quieres otra forma) */
+.barra-ene { height: 35%; }
+.barra-feb { height: 50%; }
+.barra-mar { height: 70%; }
+.barra-abr { height: 60%; }
+.barra-may { height: 85%; }
+.barra-jun { height: 45%; }
+
+/* Texto debajo de cada barra de mes */
+.barra-mes-label {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+
+
+/* Contenedor que junta eje Y + barras de meses */
+.grafica-meses-wrapper,
+.grafica-usuarios-wrapper {
+  max-width: 650px;
+  width: 100%;
+  height: 220px;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Eje Y con números de 0 a 100 */
+.eje-y-meses {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-right: 0.75rem;
+  font-size: 0.8rem;
+  color: #37474f;
+}
+
+
+
+/* Contenedor general del cuadro "Cantidad de Usuarios" */
+
+
+/* Eje Y 0–10 (de 2 en 2) */
+.eje-y-usuarios {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-right: 0.75rem;
+  font-size: 0.8rem;
+  color: #37474f;
+}
+
+.grafica-barras-meses,
+.grafica-barras-usuarios {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.barra-mes,
+.barra-usuario {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.barra-usuario-rect {
+  width: 55%;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Colores de cada tipo (la altura viene desde el HTML con style="height: X%;") */
+.barra-alumnos {
+  background: #1e88e5;   /* azul */
+}
+
+.barra-profesores {
+  background: #fdd835;   /* amarillo */
+}
+
+.barra-noinscritos {
+  background: #fb8c00;   /* naranja */
+}
+
+.barra-bloqueados {
+  background: #e53935;   /* rojo */
+}
+
+.barra-usuario-label {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+
+
+/* ====== RESPONSIVO ====== */
+
+/* Pantallas medianas (tablets, etc.) */
+@media (max-width: 992px) {
+  .estadisticas-contenido,
+  .registros-dia-contenido,
+  .tiempo-dock-contenido {
+    padding: 1.5rem;
+  }
+
+  .pie-usuarios-grafica {
+    width: 180px;
+  }
+
+  .grafica-meses-wrapper,
+  .grafica-usuarios-wrapper {
+    height: 190px;
+  }
+
+  .grafica-barras-meses,
+  .grafica-barras-usuarios {
+    gap: 0.7rem;
+  }
+
+  .barra-mes-label,
+  .barra-usuario-label {
+    font-size: 0.8rem;
+  }
+
+  .eje-y-meses span,
+  .eje-y-usuarios span {
+    font-size: 0.75rem;
+  }
+
+  .pie-label {
+    font-size: 1.2rem;
+  }
+}
+
+/* Pantallas pequeñas (celulares) */
+@media (max-width: 600px) {
+  .estadisticas-contenido,
+  .registros-dia-contenido,
+  .tiempo-dock-contenido {
+    padding: 1.1rem;
+  }
+
+  .pie-usuarios-grafica {
+    width: 150px;
+  }
+
+  .grafica-meses-wrapper,
+  .grafica-usuarios-wrapper {
+    height: 170px;
+  }
+
+  .grafica-barras-meses,
+  .grafica-barras-usuarios {
+    gap: 0.5rem;
+  }
+
+  .barra-mes-label,
+  .barra-usuario-label {
+    font-size: 0.75rem;
+  }
+
+  .eje-y-meses span,
+  .eje-y-usuarios span {
+    font-size: 0.7rem;
+  }
+
+  .leyenda-item {
+    font-size: 0.85rem;
+  }
+}
+
+
+
+
+
+/* =========================================================
+   EXTRA RESPONSIVE ESTADÍSTICAS
+   ========================================================= */
+
+/* Tablets y pantallas medianas */
+@media (max-width: 768px){
+  /* El contenido se hace un poco más compacto */
+  .estadisticas-contenido,
+  .registros-dia-contenido,
+  .tiempo-dock-contenido{
+    padding: 1.3rem 1.2rem;
+  }
+
+  /* Pie + leyenda en columna para que no se aprieten */
+  .estadisticas-contenido{
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pie-usuarios-leyenda{
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+  }
+
+  .pie-usuarios-grafica{
+    width: 170px;
+  }
+}
+
+/* Móviles (≤ 480px) */
+@media (max-width: 480px){
+  .estadisticas-contenido,
+  .registros-dia-contenido,
+  .tiempo-dock-contenido{
+    padding: 1rem 0.8rem;
+  }
+
+  .pie-usuarios-grafica{
+    width: 140px;
+  }
+
+  .pie-label{
+    font-size: 1.1rem;
+  }
+
+  .leyenda-item{
+    font-size: 0.8rem;
+  }
+
+  .grafica-meses-wrapper,
+  .grafica-usuarios-wrapper{
+    height: 160px;
+  }
+
+  .grafica-barras-meses,
+  .grafica-barras-usuarios{
+    gap: 0.4rem;
+  }
+
+  .barra-mes-label,
+  .barra-usuario-label{
+    font-size: 0.7rem;
+  }
+
+  .eje-y-meses span,
+  .eje-y-usuarios span{
+    font-size: 0.65rem;
+  }
+}
+
+/* Móviles muy pequeños (≤ 360px) */
+@media (max-width: 360px){
+  .pie-usuarios-grafica{
+    width: 130px;
+  }
+
+  .pie-label{
+    font-size: 1rem;
+  }
+
+  .estadisticas-contenido,
+  .registros-dia-contenido,
+  .tiempo-dock-contenido{
+    padding: 0.9rem 0.6rem;
+  }
+}
+
+
+
+
+/* ==== NUEVA DISTRIBUCIÓN DEL PASTEL: PORCENTAJES FUERA ==== */
+
+/* Pastel centrado, porcentajes a izquierda y derecha */
+.pie-usuarios {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;              /* separación entre % y pastel */
+}
+
+/* El pastel sigue siendo un círculo centrado */
+.pie-usuarios-grafica {
+  position: relative;
+}
+
+/* Etiquetas de porcentaje (ya no absolutas) */
+.pie-label {
+  position: static;
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-align: center;
+  min-width: 3.5rem;
+}
+
+/* Color del % de ALUMNOS = azul del pastel */
+.pie-label-azul {
+  color: #1e88e5;   /* mismo azul del pastel */
+}
+
+/* Color del % de PROFESORES = naranja */
+.pie-label-amarillo {
+  color: #ff9800;   /* naranja para diferenciar del amarillo del pastel */
+}
+
+/* Ajuste en pantallas pequeñas */
+@media (max-width: 768px) {
+  .pie-usuarios {
+    gap: 1.5rem;
+  }
+
+  .pie-label {
+    font-size: 1.1rem;
+  }
+}
+
+
+
+
+/* ==== NUEVA DISTRIBUCIÓN DEL PASTEL: PORCENTAJES + TEXTOS POR LADO ==== */
+
+.pie-usuarios {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;              /* separación entre columnas y pastel */
+}
+
+.pie-usuarios-grafica {
+  position: relative;
+}
+
+/* Columna izquierda y derecha (porcentaje + texto) */
+.pie-usuarios-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 5rem;
+}
+
+/* Porcentaje grande */
+.pie-label {
+  position: static;
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-align: center;
+  min-width: 3.5rem;
+}
+
+/* Color del % de ALUMNOS = azul del pastel */
+.pie-label-azul {
+  color: #1e88e5;
+}
+
+/* Color del % de PROFESORES = naranja */
+.pie-label-amarillo {
+  color: #ff9800;
+}
+
+/* Texto "Alumnos (#)" / "Profesores (#)" debajo del % */
+.pie-subtexto {
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.pie-subtexto-azul {
+  color: #1e88e5;
+}
+
+.pie-subtexto-amarillo {
+  color: #ff9800;
+}
+
+/* Ajuste en pantallas pequeñas */
+@media (max-width: 768px) {
+  .pie-usuarios {
+    gap: 1.5rem;
+  }
+
+  .pie-label {
+    font-size: 1.1rem;
+  }
+
+  .pie-subtexto {
+    font-size: 0.85rem;
+  }
+}
+
+
+
+
+
+/* Ajustes para pantallas medianas */
+@media (max-width: 768px) {
+  .pie-usuarios {
+    gap: 1.5rem;
+  }
+
+  .pie-label {
+    font-size: 1.1rem;
+  }
+
+  .pie-subtexto {
+    font-size: 0.85rem;
+  }
+}
+
+/* Ajustes para pantallas pequeñas (celular) */
+@media (max-width: 480px) {
+  /* En celular apilamos todo en columna:
+     Alumnos (% y texto) -> Pastel -> Profesores (% y texto) */
+  .pie-usuarios {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pie-usuarios-col {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pie-usuarios-grafica {
+    width: 180px;
+    height: 180px;
+  }
+
+  .pie-label {
+    font-size: 1rem;
+  }
+
+  .pie-subtexto {
+    font-size: 0.8rem;
+  }
+}
+
+
+
+.barra-usuario-valor {
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Misma paleta que las barras */
+.barra-usuario-valor-alumnos {
+  color: #1e88e5;   /* azul alumnos */
+}
+
+.barra-usuario-valor-profesores {
+  color: #fdd835;   /* amarillo profesores */
+}
+
+.barra-usuario-valor-noinscritos {
+  color: #fb8c00;   /* naranja no inscritos */
+}
+
+.barra-usuario-valor-bloqueados {
+  color: #e53935;   /* rojo bloqueados */
+}
+
+/* (Opcional) un poquito más chico en pantallas pequeñas */
+@media (max-width: 768px) {
+  .barra-usuario-valor {
+    font-size: 0.8rem;
+  }
+}

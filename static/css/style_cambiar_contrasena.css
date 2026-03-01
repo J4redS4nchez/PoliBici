@@ -1,0 +1,292 @@
+:root{
+  --guinda:#7a003c;
+  --guinda-osc:#5b002d;
+  --fondo:#f0f2f5;
+  --texto:#1c1e21;
+  --borde:#dadde1;
+  --tb-h:36px;          /* altura controles topbar */
+  --tb-gap:8px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  background:var(--fondo);
+  color:var(--texto);
+}
+.sr-only{
+  position:absolute!important;
+  width:1px;height:1px;
+  padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);
+  white-space:nowrap;border:0;
+}
+
+/* ===== Topbar ===== */
+.topbar{
+  min-height:56px;
+  background:#fff;
+  border-bottom:1px solid var(--borde);
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:8px 16px;
+}
+.brand{
+  font-weight:800;
+  letter-spacing:.4px;
+  color:var(--guinda);
+  font-size:22px;
+}
+
+.brand-link{
+  text-decoration:none;
+  color:inherit;
+  display:inline-flex;
+  align-items:center;
+}
+.brand-link:focus{
+  outline:2px solid color-mix(in srgb, var(--guinda) 40%, transparent);
+  outline-offset:2px;
+}
+.brand-link:hover .brand{
+  filter:brightness(0.95);
+}
+
+.topbar-form{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:var(--tb-gap);
+  flex-wrap:wrap;
+}
+.tb-input{
+  height:var(--tb-h);
+  padding:0 10px;
+  border:1px solid #ccd0d5;
+  border-radius:6px;
+  font-size:14px;
+  background:#fff;
+  min-width:180px;
+}
+.tb-input:focus{
+  border-color:var(--guinda);
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--guinda) 20%, transparent);
+  outline:none;
+}
+.tb-btn{
+  height:var(--tb-h);
+  border:0;
+  padding:0 12px;
+  border-radius:6px;
+  font-weight:700;
+  background:var(--guinda);
+  color:#fff;
+  cursor:pointer;
+  transition:filter .15s, transform .02s;
+}
+.tb-btn:hover{ filter:brightness(1.05) }
+.tb-btn:active{ transform:translateY(1px) }
+
+.tb-link{
+  color:var(--guinda);
+  text-decoration:none;
+  font-size:14px;
+  margin-left:4px;
+}
+.tb-link:hover{ text-decoration:underline }
+
+@media (max-width:780px){
+  .tb-input{ min-width:140px }
+}
+@media (max-width:560px){
+  .topbar-form{ width:100%; gap:6px }
+  .tb-input{ flex:1 1 120px }
+  .tb-link{ width:100%; text-align:right; margin-top:2px }
+}
+
+/* ===== Contenedor central ===== */
+.wrap{
+  min-height:calc(100dvh - 56px);
+  display:grid;
+  place-items:center;
+  padding:24px;
+}
+
+/* ===== Tarjeta ===== */
+.card{
+  width:min(760px, 92vw);
+  background:#fff;
+  border:1px solid var(--borde);
+  border-radius:8px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+.card-header{
+  padding:16px 20px;
+  border-bottom:1px solid var(--borde);
+}
+.card-header h1{
+  font-size:22px;
+  margin:0;
+}
+.card-body{ padding:16px 20px }
+.card-footer{
+  padding:12px 0 0;
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+}
+
+/* Campo principal */
+.form-row{ margin-bottom:12px }
+.label{
+  display:block;
+  font-size:14px;
+  color:#606770;
+  margin-bottom:8px;
+}
+.input{
+  width:100%;
+  padding:16px 14px;
+  border:1px solid #ccd0d5;
+  border-radius:8px;
+  font-size:16px;
+  outline:none;
+  background:#fff;
+}
+.input:focus{
+  border-color:var(--guinda);
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--guinda) 20%, transparent);
+}
+
+/* Botones */
+.btn{
+  border:0;
+  border-radius:6px;
+  padding:10px 16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:filter .15s, transform .02s;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.btn:active{ transform:translateY(1px) }
+
+.btn-sec{
+  background:#e4e6eb;
+  color:#050505;
+}
+.btn-sec:hover{ filter:brightness(0.98) }
+
+.btn-guinda{
+  background:var(--guinda);
+  color:#fff;
+}
+.btn-guinda:hover{ filter:brightness(1.04) }
+
+/* Mensajes flash */
+.flash{
+  margin-top:8px;
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid transparent;
+  font-size:14px;
+}
+.flash.ok{ background:#e8f5ec; color:#0f9d58; border-color:#c6e8d2 }
+.flash.error{ background:#fdeaea; color:#b00020; border-color:#f3c4c4 }
+
+/* =========================
+   AJUSTES RESPONSIVOS EXTRA
+   ========================= */
+
+/* Tablets y pantallas medianas */
+@media (max-width: 900px){
+  .card{
+    width:min(640px, 94vw);
+  }
+}
+
+/* Celulares en general */
+@media (max-width: 600px){
+  .topbar{
+    padding:8px 12px;
+  }
+
+  .brand{
+    font-size:20px;
+  }
+
+  .wrap{
+    padding:16px;
+  }
+
+  .card{
+    width:100%;
+    max-width:100%;
+  }
+
+  .card-header,
+  .card-body{
+    padding:14px 16px;
+  }
+
+  .card-header h1{
+    font-size:20px;
+  }
+
+  .input{
+    padding:14px 12px;
+    font-size:15px;
+  }
+
+  .card-body p{
+    font-size:14px;
+    line-height:1.5;
+  }
+}
+
+/* Celulares muy pequeños / vertical estrecho */
+@media (max-width: 420px){
+  .topbar{
+    padding:8px 10px;
+  }
+
+  .brand{
+    font-size:18px;
+  }
+
+  .wrap{
+    padding:12px;
+  }
+
+  .card{
+    border-radius:0;
+    border-left:0;
+    border-right:0;
+    box-shadow:none;
+  }
+
+  .card-header,
+  .card-body{
+    padding-inline:12px;
+  }
+
+  .card-header h1{
+    font-size:18px;
+  }
+
+  /* Botones en columna, ocupando todo el ancho */
+  .card-footer{
+    flex-direction:column-reverse;
+    align-items:stretch;
+    padding-top:16px;
+  }
+
+  .btn{
+    width:100%;
+  }
+}

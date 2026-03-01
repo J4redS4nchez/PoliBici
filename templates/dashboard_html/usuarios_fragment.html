@@ -1,0 +1,1748 @@
+<!-- Fragmento de Usuarios (sin <head>/<body>) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/usuarios.css') }}">
+
+  <!-- KPIs de usuarios -->
+  <section class="kpis">
+    <article class="kpi kpi-alumnos">
+      <div class="kpi-num" id="kpi-usuarios-alumnos">0</div>
+      <div class="kpi-label">Alumnos</div>
+    </article>
+
+  <article class="kpi kpi-profesores">
+    <div class="kpi-num" id="kpi-usuarios-profesores">0</div>
+    <div class="kpi-label">Profesores</div>
+  </article>
+
+  <article class="kpi kpi-registrados">
+    <div class="kpi-num" id="kpi-usuarios-registrados">0</div>
+    <div class="kpi-label">Registrados</div>
+  </article>
+
+  <article class="kpi kpi-noinscritos">
+    <div class="kpi-num" id="kpi-usuarios-noinscritos">0</div>
+    <div class="kpi-label">No Inscritos</div>
+  </article>
+
+  <article class="kpi kpi-bloqueados">
+    <div class="kpi-num" id="kpi-usuarios-bloqueados">0</div>
+    <div class="kpi-label">Bloqueados</div>
+  </article>
+
+</section>
+
+<!-- Barra de filtros / búsqueda / acciones -->
+<!-- Barra de filtros / búsqueda / acciones -->
+<section class="usuarios-toolbar">
+  <!-- Izquierda: selects -->
+  <div class="usuarios-toolbar-left">
+    <select class="usuarios-select" id="filtro-tipo">
+      <option value="todos">Todos los tipos</option>
+      <option value="alumno">Alumnos</option>
+      <option value="profesor">Profesores</option>
+    </select>
+
+    <select class="usuarios-select usuarios-select-estado" id="filtro-estado">
+      <option value="todos">Todos los estados</option>
+      <option value="registrado">Registrados</option>
+      <option value="no inscrito">No inscritos</option>
+      <option value="bloqueado">Bloqueados</option>
+    </select>
+  </div>
+
+  <!-- Derecha: solo botón Descargar + buscador -->
+  <div class="usuarios-toolbar-right">
+    <button type="button" class="btn-accion btn-descargar">
+      <span class="btn-icon" aria-hidden="true">⭳</span>
+      <span>Descargar</span>
+    </button>
+
+<div class="usuarios-search">
+  <span class="search-icon" aria-hidden="true"></span>
+  <input id="buscador-usuarios" type="text" placeholder="Buscar usuario..." />
+</div>
+
+
+  </div>
+</section>
+
+
+<!-- Lista de usuarios -->
+<section class="panel card">
+  <header class="card-header card-header-usuarios">
+    <h2>Lista de Usuarios</h2>
+    <button type="button" class="btn-agregar-usuario" id="btn-agregar-usuario">
+      <span class="btn-icon" aria-hidden="true">+</span>
+      <span>Agregar Usuario</span>
+    </button>
+  </header>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Tipo</th>
+          <th>Credencial</th>
+          <th>Estado</th>
+          <th>Último Acceso</th>
+          <th class="th-acciones"><span>Acciones</span></th>
+
+
+        </tr>
+      </thead>
+      <tbody id="usuarios-body">
+        <tr>
+          <td>001</td>
+          <td>María González</td>
+          <td>
+            <span class="badge badge-tipo badge-alumno">Alumno</span>
+          </td>
+          <td>MG2023001</td>
+          <td>
+            <span class="badge badge-estado badge-registrado">Registrado</span>
+          </td>
+          <td>18/05/2023<br>14:30</td>
+          <td class="acciones acciones-usuarios">
+            <button type="button" class="btn-usuario btn-editar">Editar</button>
+            <button type="button" class="btn-usuario btn-bloquear">Bloquear</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>002</td>
+          <td>Carlos López</td>
+          <td>
+            <span class="badge badge-tipo badge-profesor">Profesor</span>
+          </td>
+          <td>CL2023002</td>
+          <td>
+            <span class="badge badge-estado badge-noinscrito">No Inscrito</span>
+          </td>
+          <td>15/05/2023<br>09:15</td>
+          <td class="acciones acciones-usuarios">
+            <button type="button" class="btn-usuario btn-editar">Editar</button>
+            <button type="button" class="btn-usuario btn-bloquear">Bloquear</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>003</td>
+          <td>Ana Rodríguez</td>
+          <td>
+            <span class="badge badge-tipo badge-alumno">Alumno</span>
+          </td>
+          <td>AR2023003</td>
+          <td>
+            <span class="badge badge-estado badge-bloqueado">Bloqueado</span>
+          </td>
+          <td>10/05/2023<br>16:45</td>
+          <td class="acciones acciones-usuarios">
+            <button type="button" class="btn-usuario btn-editar">Editar</button>
+            <button type="button" class="btn-usuario btn-desbloquear">Desbloquear</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>004</td>
+          <td>Roberto Sánchez</td>
+          <td>
+            <span class="badge badge-tipo badge-profesor">Profesor</span>
+          </td>
+          <td>RS2023004</td>
+          <td>
+            <span class="badge badge-estado badge-registrado">Registrado</span>
+          </td>
+          <td>19/05/2023<br>08:20</td>
+          <td class="acciones acciones-usuarios">
+            <button type="button" class="btn-usuario btn-editar">Editar</button>
+            <button type="button" class="btn-usuario btn-bloquear">Bloquear</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<script>
+  // Cargar tabla de usuarios (alumnos + profesores + no inscritos)
+  window.renderUsuarios = function(){
+    const tbody = document.getElementById('usuarios-body');
+    if (!tbody) return;
+
+    // Filtro por tipo (select de "Todos los tipos / Alumnos / Profesores")
+    const selectTipo  = document.getElementById('filtro-tipo');
+    const filtroTipo  = selectTipo ? (selectTipo.value || 'todos') : 'todos';
+
+    // Filtro por estado (select de "Todos los estados / Registrados / No inscritos / Bloqueados")
+    const selectEstado = document.getElementById('filtro-estado');
+    const filtroEstado = selectEstado ? (selectEstado.value || 'todos') : 'todos';
+
+
+    // Texto del buscador (Buscar usuario...)
+    const inputBuscar   = document.getElementById('buscador-usuarios');
+    const textoBusqueda = inputBuscar ? (inputBuscar.value || '').trim().toLowerCase() : '';
+
+    // Para textos normales
+    const safe = v => (v && String(v).trim() !== '' ? v : '--------');
+
+    // Para el campo de fecha:
+    // - Si viene vacío -> '--------'
+    // - Si viene en formato "año-mes-día" (YYYY-MM-DD) -> "día/mes/año"
+    // - Si viene en cualquier otro formato -> se muestra tal cual
+// Para el campo de fecha:
+// - Si viene vacío -> '--------'
+// - Si viene en formato "YYYY-MM-DD,HH-MM-SS":
+//      - Si es hoy      -> "Hoy a las HH:MM hrs"
+//      - Si es ayer     -> "Ayer a las HH:MM hrs"
+//      - Día anterior   -> "DD-MM-YYYY"
+// - Si viene en otro formato (por ejemplo el viejo "YYYY-MM-DD") -> se intenta
+//   mostrar como DD/MM/YYYY y si no se puede, se deja tal cual.
+const formatFecha = v => {
+  if (!v || String(v).trim() === '') {
+    return '--------';
+  }
+
+  const str = String(v).trim();
+
+  // ----- NUEVO FORMATO: "YYYY-MM-DD,HH-MM-SS" -----
+  if (str.includes(',')) {
+    const [datePart, timePartRaw] = str.split(',');
+    const [anio, mes, dia] = (datePart || '').split('-');
+
+    // Validar fecha básica
+    if (/^\d{4}$/.test(anio) && /^\d{1,2}$/.test(mes) && /^\d{1,2}$/.test(dia)) {
+      const year  = parseInt(anio, 10);
+      const month = parseInt(mes, 10) - 1; // JS: 0 = enero
+      const day   = parseInt(dia, 10);
+
+      const fechaRegistro = new Date(year, month, day);
+
+      // "Hoy" y "Ayer" se calculan a partir de la fecha actual (sin hora)
+      const ahora   = new Date();
+      const hoy     = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+      const regDia  = new Date(fechaRegistro.getFullYear(), fechaRegistro.getMonth(), fechaRegistro.getDate());
+
+      const unDiaMs = 24 * 60 * 60 * 1000;
+      const diffMs  = hoy.getTime() - regDia.getTime();
+
+      // Hora y minutos desde la parte HH-MM-SS
+      let hh = '00';
+      let mm = '00';
+
+      if (timePartRaw) {
+        const [hStr, mStr] = timePartRaw.split('-');
+        if (/^\d{1,2}$/.test(hStr)) hh = hStr.padStart(2, '0');
+        if (/^\d{1,2}$/.test(mStr)) mm = mStr.padStart(2, '0');
+      }
+
+      if (diffMs === 0) {
+        // Misma fecha -> Hoy
+        return `Hoy a las ${hh}:${mm} hrs`;
+      } else if (diffMs === unDiaMs) {
+        // Un día antes -> Ayer
+        return `Ayer a las ${hh}:${mm} hrs`;
+      } else if (diffMs > unDiaMs) {
+        // Día anterior al de ayer -> "DD-MM-YYYY"
+        const dd = dia.padStart(2, '0');
+        const mmTxt = mes.padStart(2, '0');
+        return `${dd}-${mmTxt}-${anio}`;
+      } else {
+        // Fecha en el futuro o algo raro: se muestra tal cual
+        return str;
+      }
+    }
+
+    // Si algo falla en el parseo, devuelve como está
+    return str;
+  }
+
+  // ----- FORMATO VIEJO: "YYYY-MM-DD" -----
+  const partes = str.split('-');
+  if (partes.length === 3) {
+    const [anio, mes, dia] = partes;
+
+    const esAnioValido = /^\d{4}$/.test(anio);
+    const esMesValido  = /^\d{1,2}$/.test(mes);
+    const esDiaValido  = /^\d{1,2}$/.test(dia);
+
+    if (esAnioValido && esMesValido && esDiaValido) {
+      return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${anio}`;
+    }
+  }
+
+  // Si no cumple el formato esperado, se muestra tal cual
+  return str;
+};
+
+
+    fetch("{{ url_for('usuarios_bp.api_lista_usuarios') }}", { cache: "no-store" })
+      .then(r => r.json())
+      .then(({ items }) => {
+        tbody.innerHTML = "";
+        if (!Array.isArray(items)) return;
+
+        items.forEach((u, idx) => {
+          // Tipo normalizado (alumno / profesor)
+          const tipoData = (u.tipo || '').toLowerCase();
+
+          // ====== APLICAR FILTRO DE TIPOS ======
+          if (filtroTipo === 'alumno'   && tipoData !== 'alumno')   return;
+          if (filtroTipo === 'profesor' && tipoData !== 'profesor') return;
+          // =====================================
+
+          // ID visual secuencial 001, 002, 003...
+          const idTexto = String(idx + 1).padStart(3, '0');
+
+          // Datos "seguros" para usar en la tabla y en el buscador
+          const nombreSafe     = safe(u.nombre);
+          const credencialSafe = safe(u.credencial);
+          const estadoOriginal = u.estado || '';
+          const estado         = estadoOriginal.toLowerCase();
+          const fechaTexto     = formatFecha(u.fecha);
+
+
+          // ====== APLICAR FILTRO DE ESTADOS ======
+          if (filtroEstado === 'registrado'   && estado !== 'registrado')   return;
+          if (filtroEstado === 'no inscrito'  && estado !== 'no inscrito')  return;
+          if (filtroEstado === 'bloqueado'    && estado !== 'bloqueado')    return;
+          // (si es 'todos', no filtramos nada)
+          // =======================================
+
+          // ====== APLICAR BUSCADOR EN TIEMPO REAL ======
+          // El texto que escribe el usuario se compara contra:
+          // ID visual, nombre, credencial, tipo, estado y último acceso
+          if (textoBusqueda) {
+            const q = textoBusqueda;
+
+            const coincide =
+              idTexto.toLowerCase().includes(q)              || // ID 001, 002...
+              nombreSafe.toLowerCase().includes(q)           || // Nombre
+              credencialSafe.toLowerCase().includes(q)       || // Credencial
+              tipoData.includes(q)                           || // alumno / profesor
+              estado.includes(q)                             || // registrado / bloqueado / no inscrito
+              fechaTexto.toLowerCase().includes(q);             // último acceso
+
+            if (!coincide) {
+              return; // No coincide con la búsqueda, no se agrega la fila
+            }
+          }
+          // ===============================================
+
+          // Pastilla de tipo (Alumno / Profesor)
+          const esProfesor = (tipoData === 'profesor');
+          const tipoHtml = esProfesor
+            ? '<span class="badge badge-tipo badge-profesor">Profesor</span>'
+            : '<span class="badge badge-tipo badge-alumno">Alumno</span>';
+
+          // Pastilla de estado (Registrado / No Inscrito / Bloqueado...)
+          let estadoHtml = '';
+          if (estado === 'registrado') {
+            estadoHtml = '<span class="badge badge-estado badge-registrado">Registrado</span>';
+          } else if (estado === 'no inscrito') {
+            estadoHtml = '<span class="badge badge-estado badge-noinscrito">No Inscrito</span>';
+          } else if (estado === 'bloqueado') {
+            estadoHtml = '<span class="badge badge-estado badge-bloqueado">Bloqueado</span>';
+          } else {
+            estadoHtml = safe(estadoOriginal);
+          }
+
+          const urlData        = u.url || '';
+          const credencialData = u.credencial || '';
+          const ocupandoDock   = !!u.ocupando_dock;   // 👈 NUEVO
+          // tipoData ya está definido arriba
+
+          // Botones de acción: solo si NO está ocupando un dock
+let accionesHtml = '';
+
+// 1) Bloquear / Desbloquear:
+//    - SIEMPRE se muestra (aunque esté ocupando el dock)
+if (estado === 'bloqueado') {
+  accionesHtml += `
+    <button type="button"
+            class="btn-usuario btn-desbloquear"
+            data-tipo="${tipoData}"
+            data-credencial="${credencialData}"
+            data-url="${urlData}">
+      Desbloquear
+    </button>
+  `;
+} else {
+  accionesHtml += `
+    <button type="button"
+            class="btn-usuario btn-bloquear"
+            data-tipo="${tipoData}"
+            data-credencial="${credencialData}"
+            data-url="${urlData}">
+      Bloquear
+    </button>
+  `;
+}
+
+// 2) Editar y X:
+//    - SOLO si NO está ocupando dock
+if (!ocupandoDock) {
+  accionesHtml =
+    `
+      <button type="button"
+              class="btn-usuario btn-editar"
+              data-id="${u.id}"
+              data-origen="${u.origen || ''}"
+              data-tipo="${tipoData}"
+              data-url="${urlData}">
+        Editar
+      </button>
+    ` + accionesHtml;
+
+  accionesHtml += `
+    <button type="button"
+            class="btn-usuario btn-x"
+            data-id="${u.id}"
+            data-tipo="${tipoData}"
+            data-credencial="${credencialData}"
+            data-url="${urlData}"
+            data-nombre="${nombreSafe}"
+            data-origen="${u.origen || ''}">
+      X
+    </button>
+  `;
+}
+
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${idTexto}</td>
+            <td>${nombreSafe}</td>
+            <td>${tipoHtml}</td>
+            <td>${credencialSafe}</td>
+            <td>${estadoHtml}</td>
+            <td>${fechaTexto}</td>
+            <td class="acciones acciones-usuarios">
+              ${accionesHtml}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(console.error);
+  };
+
+
+  // Primera carga al entrar al fragmento
+  window.renderUsuarios();
+
+  // Vuelve a renderizar cuando cambie el filtro de tipo
+  const selectTipoInit = document.getElementById('filtro-tipo');
+  if (selectTipoInit) {
+    selectTipoInit.addEventListener('change', function(){
+      window.renderUsuarios();
+    });
+  }
+
+  // Vuelve a renderizar en tiempo real cuando se escriba en el buscador
+  const inputBuscarInit = document.getElementById('buscador-usuarios');
+  if (inputBuscarInit) {
+    inputBuscarInit.addEventListener('input', function(){
+      window.renderUsuarios();
+    });
+  }
+
+
+  // Vuelve a renderizar cuando cambie el filtro de estado
+const selectEstadoInit = document.getElementById('filtro-estado');
+if (selectEstadoInit) {
+  selectEstadoInit.addEventListener('change', function(){
+    window.renderUsuarios();
+  });
+}
+
+</script>
+
+
+
+<script>
+  // Delegar clic en los botones Bloquear / Desbloquear dentro de la tabla
+  (function(){
+    const tbody = document.getElementById('usuarios-body');
+    if (!tbody) return;
+
+    tbody.addEventListener('click', function(e){
+      const btn = e.target.closest('.btn-usuario');
+      if (!btn) return;
+
+      // BLOQUEAR
+      if (btn.classList.contains('btn-bloquear')) {
+        const tipo = btn.dataset.tipo || '';
+        const credencial = btn.dataset.credencial || '';
+        const url = btn.dataset.url || '';
+
+        if (!url) {
+          console.error('No hay URL para bloquear');
+          return;
+        }
+
+        fetch("{{ url_for('usuarios_bp.api_bloquear_usuario') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "fetch"
+          },
+          body: JSON.stringify({ tipo, credencial, url })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.ok) {
+            if (typeof window.renderUsuarios === 'function') {
+              window.renderUsuarios();
+            }
+            if (typeof window.refreshKpiUsuarios === 'function') {
+              window.refreshKpiUsuarios();
+            }
+          } else {
+            console.error('Error al bloquear', data);
+          }
+        })
+        .catch(console.error);
+      }
+
+      // DESBLOQUEAR
+      else if (btn.classList.contains('btn-desbloquear')) {
+        const url = btn.dataset.url || '';
+        if (!url) return;
+
+        fetch("{{ url_for('usuarios_bp.api_desbloquear_usuario') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "fetch"
+          },
+          body: JSON.stringify({ url })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.ok) {
+            if (typeof window.renderUsuarios === 'function') {
+              window.renderUsuarios();
+            }
+            if (typeof window.refreshKpiUsuarios === 'function') {
+              window.refreshKpiUsuarios();
+            }
+          } else {
+            console.error('Error al desbloquear', data);
+          }
+        })
+        .catch(console.error);
+      }
+    });
+  })();
+</script>
+
+
+
+<!-- ===== MODAL AGREGAR USUARIO ===== -->
+<div class="usuarios-modal-overlay" id="modal-usuario-overlay" hidden>
+  <div class="usuarios-modal" role="dialog" aria-modal="true" aria-labelledby="modal-usuario-titulo">
+    <header class="usuarios-modal-header">
+      <div class="usuarios-modal-title">
+        <div class="usuarios-switch">
+          <span class="switch-label"></span>
+          <label class="usuarios-toggle">
+            <input type="checkbox" id="toggle-tipo-usuario">
+            <span class="usuarios-toggle-slider"></span>
+          </label>
+          <span class="switch-label"></span>
+        </div>
+        <h2 id="modal-usuario-titulo">Agregar Nuevo Alumno</h2>
+      </div>
+
+      <button type="button" class="usuarios-modal-close" id="modal-usuario-close" aria-label="Cerrar">×</button>
+    </header>
+
+    <form class="usuarios-modal-body" id="form-nuevo-usuario">
+
+      <!-- ========= FORMULARIO ALUMNO ========= -->
+      <div id="form-alumno" class="form-tipo-usuario">
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="alumno-boleta">Boleta</label>
+            <input id="alumno-boleta" type="text" placeholder="Ingrese la boleta">
+          </div>
+          <div class="usuarios-field">
+            <label for="alumno-curp">CURP</label>
+            <input id="alumno-curp" type="text" placeholder="Ingrese la CURP">
+          </div>
+        </div>
+
+        <div class="usuarios-modal-row">
+          <div class="usuarios-field">
+            <label for="alumno-nombre">Nombre Completo</label>
+            <input id="alumno-nombre" type="text" placeholder="Ingrese el nombre completo">
+          </div>
+        </div>
+
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="alumno-carrera">Carrera</label>
+            <input id="alumno-carrera" type="text" placeholder="Ingrese la carrera">
+          </div>
+          <div class="usuarios-field">
+            <label for="alumno-escuela">Escuela</label>
+                <select id="alumno-escuela">
+                  <option>Seleccionar escuela</option>
+                  <option>ESCOM</option>
+                  <option>ESFM</option>
+                  <option>ESIME</option>
+                  <option>ESIQIE</option>
+                  <option>ESIT</option>
+                  <option>ESIA</option>
+                  <option>ESCA</option>
+                  <option>ESE</option>
+                  <option>ENCB</option>
+                  <option>ENMH</option>
+                  <option>ESM</option>
+                  <option>EST</option>
+                  <option>UPIBI</option>
+                  <option>UPIITA</option>
+                  <option>UPIICSA</option>
+                </select>
+          </div>
+        </div>
+
+        <!-- Estado fijo, oculto: siempre "Registrado" -->
+        <input id="alumno-estado" type="hidden" value="Registrado">
+
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="alumno-pin">PIN</label>
+            <input id="alumno-pin"
+                      type="password"
+                      placeholder="Ingrese PIN de 4 digitos"
+                      autocomplete="off"
+                      maxlength="4"
+                      inputmode="numeric">
+          </div>
+          <div class="usuarios-field">
+            <label for="alumno-turno">Turno</label>
+            <input id="alumno-turno" type="text" placeholder="Ingrese el turno">
+          </div>
+        </div>
+
+        <div class="usuarios-modal-row">
+          <div class="usuarios-field">
+            <label for="alumno-url">URL</label>
+            <input id="alumno-url" type="text" placeholder="URL de DAE">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========= FORMULARIO PROFESOR ========= -->
+      <div id="form-profesor" class="form-tipo-usuario" hidden>
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="prof-empleado">Número de Empleado</label>
+            <input id="prof-empleado" type="text" placeholder="Ingrese el número de empleado">
+          </div>
+          <div class="usuarios-field">
+            <label for="prof-nombre">Nombre Completo</label>
+            <input id="prof-nombre" type="text" placeholder="Ingrese el nombre completo">
+          </div>
+        </div>
+
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="prof-clave">Clave Presupuestal</label>
+            <input id="prof-clave" type="text" placeholder="Ingrese la clave presupuestal">
+          </div>
+          <div class="usuarios-field">
+            <label for="prof-area">Área de adscripción</label>
+            <input id="prof-area" type="text" placeholder="Ingrese el área de adscripción">
+          </div>
+        </div>
+
+        <!-- Estado fijo, oculto: siempre "Registrado" para nuevo profesor -->
+        <input id="prof-estado" type="hidden" value="Registrado">
+
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="prof-pin">PIN</label>
+            <input id="prof-pin"
+                      type="password"
+                      placeholder="Ingrese PIN de 4 digitos"
+                      autocomplete="off"
+                      maxlength="4"
+                      inputmode="numeric">
+          </div>
+          <div class="usuarios-field">
+            <label for="prof-url">URL</label>
+            <input id="prof-url"
+                   type="text"
+                   placeholder="URL de DSAPP">
+          </div>
+        </div>
+
+
+        
+      </div>
+
+      <footer class="usuarios-modal-footer">
+        <button type="submit" class="btn-modal-save">Guardar Usuario</button>
+      </footer>
+
+    </form>
+  </div>
+</div>
+
+
+
+
+<!-- ===== MODAL EDITAR USUARIO ===== -->
+<div class="usuarios-modal-overlay" id="modal-editar-overlay" hidden>
+  <div class="usuarios-modal" role="dialog" aria-modal="true" aria-labelledby="modal-editar-titulo">
+    <header class="usuarios-modal-header">
+      <div class="usuarios-modal-title">
+        <!-- aquí ya NO hay switch -->
+        <h2 id="modal-editar-titulo">Editar Alumno</h2>
+      </div>
+      <button type="button" class="usuarios-modal-close" id="modal-editar-close" aria-label="Cerrar">×</button>
+    </header>
+
+    <form class="usuarios-modal-body" id="form-editar-usuario">
+
+      <!-- ========= FORMULARIO ALUMNO (EDITAR) ========= -->
+      <div id="edit-form-alumno" class="form-tipo-usuario">
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="edit-alumno-boleta">Boleta</label>
+            <input id="edit-alumno-boleta" type="text" placeholder="Ingrese la boleta">
+          </div>
+          <div class="usuarios-field">
+            <label for="edit-alumno-curp">CURP</label>
+            <input id="edit-alumno-curp" type="text" placeholder="Ingrese la CURP">
+          </div>
+        </div>
+
+        <div class="usuarios-modal-row">
+          <div class="usuarios-field">
+            <label for="edit-alumno-nombre">Nombre Completo</label>
+            <input id="edit-alumno-nombre" type="text" placeholder="Ingrese el nombre completo">
+          </div>
+        </div>
+
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="edit-alumno-carrera">Carrera</label>
+            <input id="edit-alumno-carrera" type="text" placeholder="Ingrese la carrera">
+          </div>
+          <div class="usuarios-field">
+            <label for="edit-alumno-escuela">Escuela</label>
+            <select id="edit-alumno-escuela">
+              <option>Seleccionar escuela</option>
+              <option>ESCOM</option>
+              <option>ESFM</option>
+              <option>ESIME</option>
+              <option>ESIQIE</option>
+              <option>ESIT</option>
+              <option>ESIA</option>
+              <option>ESCA</option>
+              <option>ESE</option>
+              <option>ENCB</option>
+              <option>ENMH</option>
+              <option>ESM</option>
+              <option>EST</option>
+              <option>UPIBI</option>
+              <option>UPIITA</option>
+              <option>UPIICSA</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Turno + PIN en la misma fila -->
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="edit-alumno-turno">Turno</label>
+            <input id="edit-alumno-turno" type="text" placeholder="Ingrese el turno">
+          </div>
+          <div class="usuarios-field">
+            <label for="edit-alumno-pin">PIN</label>
+            <input id="edit-alumno-pin"
+                      type="password"
+                      placeholder="Ingrese el PIN"
+                      autocomplete="off"
+                      maxlength="4"
+                      inputmode="numeric">
+          </div>
+        </div>
+
+        <!-- URL en una fila completa -->
+        <div class="usuarios-modal-row">
+          <div class="usuarios-field">
+            <label for="edit-alumno-url">URL</label>
+            <input id="edit-alumno-url" type="text" placeholder="URL asociada (QR, etc.)">
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ========= FORMULARIO PROFESOR (EDITAR) ========= -->
+      <div id="edit-form-profesor" class="form-tipo-usuario" hidden>
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="edit-prof-empleado">Número de Empleado</label>
+            <input id="edit-prof-empleado" type="text" placeholder="Ingrese el número de empleado">
+          </div>
+          <div class="usuarios-field">
+            <label for="edit-prof-nombre">Nombre Completo</label>
+            <input id="edit-prof-nombre" type="text" placeholder="Ingrese el nombre completo">
+          </div>
+        </div>
+
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="edit-prof-clave">Clave Presupuestal</label>
+            <input id="edit-prof-clave" type="text" placeholder="Ingrese la clave presupuestal">
+          </div>
+          <div class="usuarios-field">
+            <label for="edit-prof-area">Área de adscripción</label>
+            <input id="edit-prof-area" type="text" placeholder="Ingrese el área de adscripción">
+          </div>
+        </div>
+
+        <!-- URL + PIN en la misma fila (posición donde antes estaba Estado) -->
+        <div class="usuarios-modal-row usuarios-modal-row-2col">
+          <div class="usuarios-field">
+            <label for="edit-prof-url">URL</label>
+            <input id="edit-prof-url" type="text" placeholder="URL asociada (QR, etc.)">
+          </div>
+          <div class="usuarios-field">
+            <label for="edit-prof-pin">PIN</label>
+            <input id="edit-prof-pin"
+                      type="password"
+                      placeholder="Ingrese el PIN"
+                      autocomplete="off"
+                      maxlength="4"
+                      inputmode="numeric">
+          </div>
+        </div>
+
+      </div>
+
+
+      <footer class="usuarios-modal-footer">
+        <button type="submit" class="btn-modal-save">Guardar Cambios</button>
+      </footer>
+    </form>
+  </div>
+</div>
+
+
+<!-- ===== MODAL CONFIRMAR BORRADO ===== -->
+<div class="usuarios-modal-overlay" id="modal-borrar-overlay" hidden>
+  <div class="usuarios-modal" role="dialog" aria-modal="true" aria-labelledby="modal-borrar-titulo">
+    <header class="usuarios-modal-header">
+      <h2 id="modal-borrar-titulo">Confirmar borrado</h2>
+    </header>
+
+    <div class="usuarios-modal-body">
+      <p id="modal-borrar-text">
+        Seguro que quiere borrar al usuario ______
+      </p>
+    </div>
+
+    <footer class="usuarios-modal-footer">
+      <button type="button" class="btn-modal-cancel" id="btn-borrar-cancelar">
+        Cancelar
+      </button>
+      <button type="button" class="btn-modal-save" id="btn-borrar-confirmar">
+        Borrar
+      </button>
+    </footer>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  const overlay       = document.getElementById('modal-borrar-overlay');
+  const texto         = document.getElementById('modal-borrar-text');
+  const btnCancelar   = document.getElementById('btn-borrar-cancelar');
+  const btnConfirmar  = document.getElementById('btn-borrar-confirmar');
+  const tbody         = document.getElementById('usuarios-body');
+
+  if (!overlay || !tbody) return;
+
+  let borrarId     = null;
+  let borrarOrigen = '';
+  let borrarUrl    = '';
+
+  function abrirModal(nombre){
+    overlay.hidden = false;
+    document.body.classList.add('no-scroll');
+
+    if (texto){
+      texto.textContent = `Seguro que quiere borrar al usuario ${nombre}?`;
+    }
+  }
+
+  function cerrarModal(){
+    overlay.hidden = true;
+    document.body.classList.remove('no-scroll');
+    borrarId     = null;
+    borrarOrigen = '';
+    borrarUrl    = '';
+  }
+
+  // Cuando se da clic en la X de una fila
+  tbody.addEventListener('click', function(e){
+    const btn = e.target.closest('.btn-usuario.btn-x');
+    if (!btn) return;
+
+    borrarId     = btn.dataset.id || '';
+    borrarOrigen = btn.dataset.origen || '';
+    borrarUrl    = btn.dataset.url || '';
+
+    const nombre = btn.dataset.nombre || '(sin nombre)';
+    abrirModal(nombre);
+  });
+
+  // Cancelar
+  if (btnCancelar){
+    btnCancelar.addEventListener('click', cerrarModal);
+  }
+
+  // Cerrar al hacer clic fuera del cuadro
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay){
+      cerrarModal();
+    }
+  });
+
+  // Confirmar borrado
+  if (btnConfirmar){
+    btnConfirmar.addEventListener('click', function(){
+      if (!borrarId || !borrarOrigen){
+        alert('No se encontraron los datos del usuario a borrar.');
+        return;
+      }
+
+      fetch("{{ url_for('usuarios_bp.api_borrar_usuario') }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch"
+        },
+        body: JSON.stringify({
+          id: borrarId,
+          origen: borrarOrigen,
+          url: borrarUrl   // opcional, para limpiar también bloqueados
+        })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.ok){
+            // refrescar tabla y KPIs
+            if (typeof window.renderUsuarios === 'function'){
+              window.renderUsuarios();
+            }
+            if (typeof window.refreshKpiUsuarios === 'function'){
+              window.refreshKpiUsuarios();
+            }
+            cerrarModal();
+          } else {
+            console.error('Error al borrar usuario', data);
+            alert('Ocurrió un error al borrar el usuario.');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Ocurrió un error al borrar el usuario.');
+        });
+    });
+  }
+
+})();
+</script>
+
+
+<!-- para base de datos kpis-->
+<script>
+  // KPIs de usuarios desde la base de datos
+  window.refreshKpiUsuarios = function(){
+    const elAlumnos      = document.getElementById('kpi-usuarios-alumnos');
+    const elProfesores   = document.getElementById('kpi-usuarios-profesores');
+    const elRegistrados  = document.getElementById('kpi-usuarios-registrados');
+    const elNoInscritos  = document.getElementById('kpi-usuarios-noinscritos');
+    const elBloqueados   = document.getElementById('kpi-usuarios-bloqueados');
+
+    if (!elAlumnos && !elProfesores && !elRegistrados && !elNoInscritos && !elBloqueados) return;
+
+    fetch("{{ url_for('usuarios_bp.api_kpis_usuarios') }}", { cache: "no-store" })
+      .then(r => r.json())
+      .then(({ total_alumnos, total_profesores, total_registrados, total_noinscritos, total_bloqueados }) => {
+        if (elAlumnos) {
+          elAlumnos.textContent =
+            (typeof total_alumnos === 'number') ? total_alumnos : 0;
+        }
+        if (elProfesores) {
+          elProfesores.textContent =
+            (typeof total_profesores === 'number') ? total_profesores : 0;
+        }
+        if (elRegistrados) {
+          elRegistrados.textContent =
+            (typeof total_registrados === 'number') ? total_registrados : 0;
+        }
+        if (elNoInscritos) {
+          elNoInscritos.textContent =
+            (typeof total_noinscritos === 'number') ? total_noinscritos : 0;
+        }
+        if (elBloqueados) {
+          elBloqueados.textContent =
+            (typeof total_bloqueados === 'number') ? total_bloqueados : 0;
+        }
+      })
+      .catch(console.error);
+  };
+
+  // Ejecutar una vez al cargar el fragmento
+  window.refreshKpiUsuarios();
+</script>
+
+
+
+<!-- Script para abrir/cerrar modal (solo visual, sin guardar todavía) -->
+<script>
+(function(){
+  const openBtn     = document.getElementById('btn-agregar-usuario');
+  const overlay     = document.getElementById('modal-usuario-overlay');
+  const closeBtn    = document.getElementById('modal-usuario-close');
+  const form        = document.getElementById('form-nuevo-usuario');
+  const toggleTipo  = document.getElementById('toggle-tipo-usuario');
+  const tituloModal = document.getElementById('modal-usuario-titulo');
+  const formAlumno  = document.getElementById('form-alumno');
+  const formProfesor= document.getElementById('form-profesor');
+
+  function actualizarTipoDesdeSwitch(){
+    if (!toggleTipo || !tituloModal) return;
+
+    const esProfesor = toggleTipo.checked;
+
+    if (esProfesor){
+      tituloModal.textContent = 'Agregar Nuevo Profesor';
+      if (formAlumno)  formAlumno.hidden  = true;
+      if (formProfesor)formProfesor.hidden = false;
+    } else {
+      tituloModal.textContent = 'Agregar Nuevo Alumno';
+      if (formAlumno)  formAlumno.hidden  = false;
+      if (formProfesor)formProfesor.hidden = true;
+    }
+  }
+
+  if (!openBtn || !overlay) return;
+
+  function abrirModal(){
+    overlay.hidden = false;
+    document.body.classList.add('no-scroll');
+
+    if (toggleTipo){
+      toggleTipo.checked = false;   // siempre empieza en alumno
+      actualizarTipoDesdeSwitch();
+    }
+  }
+
+  function cerrarModal(){
+    overlay.hidden = true;
+    document.body.classList.remove('no-scroll');
+  }
+
+  openBtn.addEventListener('click', abrirModal);
+  if (closeBtn) closeBtn.addEventListener('click', cerrarModal);
+
+  if (toggleTipo){
+    toggleTipo.addEventListener('change', actualizarTipoDesdeSwitch);
+  }
+
+  // Cerrar al hacer clic fuera del cuadro
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay){
+      cerrarModal();
+    }
+  });
+
+  // Envío del formulario: guardar alumno/profesor
+  if (form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+
+      const esProfesor = toggleTipo && toggleTipo.checked;
+
+      if (!esProfesor){
+        // ======== GUARDAR NUEVO ALUMNO ========
+        const boleta   = (document.getElementById('alumno-boleta').value || '').trim();
+        const curp     = (document.getElementById('alumno-curp').value || '').trim();
+        const nombre   = (document.getElementById('alumno-nombre').value || '').trim();
+        const carrera  = (document.getElementById('alumno-carrera').value || '').trim();
+        const escuelaSel = document.getElementById('alumno-escuela');
+        const estadoSel  = document.getElementById('alumno-estado');
+        const turno   = (document.getElementById('alumno-turno').value || '').trim();
+        const url     = (document.getElementById('alumno-url').value || '').trim();
+        const pin     = (document.getElementById('alumno-pin').value || '').trim();
+
+        const escuela_sigla = escuelaSel ? (escuelaSel.value || '').trim() : '';
+        const estado        = estadoSel ? (estadoSel.value || '').trim() : '';
+
+        // Validar campos vacíos
+        if (!boleta || !curp || !nombre || !carrera ||
+            !escuela_sigla || !estado || !turno || !url || !pin) {
+          alert('Debe llenar todos los campos del formulario para guardar el alumno.');
+          return;
+        }
+
+        // Validar que no se quede en "Seleccionar escuela"
+        if (escuela_sigla === 'Seleccionar escuela'){
+          alert('Debe seleccionar una escuela válida.');
+          return;
+        }
+
+        fetch("{{ url_for('usuarios_bp.api_nuevo_alumno') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "fetch"
+          },
+          body: JSON.stringify({
+            boleta,
+            curp,
+            nombre,
+            carrera,
+            escuela_sigla,
+            estado,
+            turno,
+            url,
+            pin
+          })
+        })
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.ok){
+              // limpiar formulario
+              form.reset();
+              if (escuelaSel) escuelaSel.value = 'Seleccionar escuela';
+              if (estadoSel)  estadoSel.value  = 'Seleccionar estado';
+
+              // refrescar tabla y KPIs
+              if (typeof window.renderUsuarios === 'function'){
+                window.renderUsuarios();
+              }
+              if (typeof window.refreshKpiUsuarios === 'function'){
+                window.refreshKpiUsuarios();
+              }
+
+              cerrarModal();
+            } else {
+              if (data && data.error === 'duplicate_url'){
+                alert('Ya existe un usuario registrado con esa URL.');
+              } else if (data && data.error === 'invalid_escuela'){
+                alert('La escuela seleccionada no es válida.');
+              } else {
+                alert('Ocurrió un error al guardar el alumno.');
+              }
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert('Ocurrió un error al guardar el alumno.');
+          });
+
+      } else {
+        // ======== GUARDAR NUEVO PROFESOR ========
+        const numero_empleado = (document.getElementById('prof-empleado').value || '').trim();
+        const nombre          = (document.getElementById('prof-nombre').value || '').trim();
+        const clave           = (document.getElementById('prof-clave').value || '').trim();
+        const area            = (document.getElementById('prof-area').value || '').trim();
+        const estadoProfEl    = document.getElementById('prof-estado');
+        const url             = (document.getElementById('prof-url').value || '').trim();
+        const pin             = (document.getElementById('prof-pin').value || '').trim();
+
+        const estado = estadoProfEl ? (estadoProfEl.value || '').trim() : '';
+
+        // Validar campos vacíos
+        if (!numero_empleado || !nombre || !clave || !area || !estado || !url || !pin){
+          alert('Debe llenar todos los campos del formulario para guardar el profesor.');
+          return;
+        }
+
+        fetch("{{ url_for('usuarios_bp.api_nuevo_profesor') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "fetch"
+          },
+          body: JSON.stringify({
+            numero_empleado,
+            nombre,
+            clave_presupuestal: clave,
+            area_adscripcion: area,
+            estado,
+            url,
+            pin
+          })
+        })
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.ok){
+              // limpiar formulario
+              form.reset();
+
+              // refrescar tabla y KPIs
+              if (typeof window.renderUsuarios === 'function'){
+                window.renderUsuarios();
+              }
+              if (typeof window.refreshKpiUsuarios === 'function'){
+                window.refreshKpiUsuarios();
+              }
+
+              cerrarModal();
+            } else {
+              if (data && data.error === 'duplicate_url'){
+                alert('Ya existe un profesor registrado con esa URL.');
+              } else {
+                alert('Ocurrió un error al guardar el profesor.');
+              }
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert('Ocurrió un error al guardar el profesor.');
+          });
+      }
+    });
+  }
+
+})();
+</script>
+
+
+
+
+<!-- Script para editar usuario -->
+<script>
+(function(){
+  const overlay      = document.getElementById('modal-editar-overlay');
+  const closeBtn     = document.getElementById('modal-editar-close');
+  const form         = document.getElementById('form-editar-usuario');
+  const tituloModal  = document.getElementById('modal-editar-titulo');
+  const formAlumno   = document.getElementById('edit-form-alumno');
+  const formProfesor = document.getElementById('edit-form-profesor');
+  const tbody        = document.getElementById('usuarios-body');
+
+  // Campos del formulario de ALUMNO (editar)
+  const editBoleta   = document.getElementById('edit-alumno-boleta');
+  const editCurp     = document.getElementById('edit-alumno-curp');
+  const editNombre   = document.getElementById('edit-alumno-nombre');
+  const editCarrera  = document.getElementById('edit-alumno-carrera');
+  const editEscuela  = document.getElementById('edit-alumno-escuela');
+  const editTurno    = document.getElementById('edit-alumno-turno');
+  const editPin      = document.getElementById('edit-alumno-pin');
+  const editUrl      = document.getElementById('edit-alumno-url');
+
+
+    // Campos del formulario de PROFESOR (editar)
+  const editProfEmpleado = document.getElementById('edit-prof-empleado');
+  const editProfNombre   = document.getElementById('edit-prof-nombre');
+  const editProfClave    = document.getElementById('edit-prof-clave');
+  const editProfArea     = document.getElementById('edit-prof-area');
+  const editProfUrl      = document.getElementById('edit-prof-url');
+  const editProfPin      = document.getElementById('edit-prof-pin');
+
+
+  // Si no hay overlay o tbody, no hacemos nada
+  if (!overlay || !tbody) return;
+
+  function limpiarFormularioAlumno(){
+    if (editBoleta)  editBoleta.value  = '';
+    if (editCurp)    editCurp.value    = '';
+    if (editNombre)  editNombre.value  = '';
+    if (editCarrera) editCarrera.value = '';
+    if (editEscuela) editEscuela.value = 'Seleccionar escuela';
+    if (editTurno)   editTurno.value   = '';
+    if (editPin)     editPin.value     = '';
+    if (editUrl)     editUrl.value     = '';
+  }
+
+
+
+    function limpiarFormularioProfesor(){
+    if (editProfEmpleado) editProfEmpleado.value = '';
+    if (editProfNombre)   editProfNombre.value   = '';
+    if (editProfClave)    editProfClave.value    = '';
+    if (editProfArea)     editProfArea.value     = '';
+    if (editProfUrl)      editProfUrl.value      = '';
+    if (editProfPin)      editProfPin.value      = '';
+  }
+
+
+  function abrirModalEditar(tipo){
+    overlay.hidden = false;
+    document.body.classList.add('no-scroll');
+
+    if (tipo === 'Profesor'){
+      tituloModal.textContent = 'Editar Profesor';
+      if (formAlumno)   formAlumno.hidden   = true;
+      if (formProfesor) formProfesor.hidden = false;
+    } else {
+      tituloModal.textContent = 'Editar Alumno';
+      if (formAlumno)   formAlumno.hidden   = false;
+      if (formProfesor) formProfesor.hidden = true;
+    }
+  }
+
+  function cerrarModalEditar(){
+    overlay.hidden = true;
+    document.body.classList.remove('no-scroll');
+  }
+
+  // Delegar clic en el tbody para todos los botones Editar que se generen dinámicamente
+  tbody.addEventListener('click', function(e){
+    const btn = e.target.closest('.btn-usuario.btn-editar');
+    if (!btn) return;
+
+    const fila   = btn.closest('tr');
+    let tipo     = 'Alumno';
+    const origen = btn.dataset.origen || '';
+    const id     = btn.dataset.id || '';
+
+    if (fila){
+      // Si en la fila hay cápsula de profesor, lo tratamos como Profesor
+      const esProfesor = fila.querySelector('.badge-profesor');
+      if (esProfesor) tipo = 'Profesor';
+    }
+
+    abrirModalEditar(tipo);
+
+    // Si es ALUMNO registrado en la tabla alumnos, pedimos detalle al backend
+    if (tipo === 'Alumno' && origen === 'alumnos' && id){
+      limpiarFormularioAlumno();
+
+      fetch("{{ url_for('usuarios_bp.api_detalle_alumno') }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch"
+        },
+        body: JSON.stringify({ id, origen })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (!data || !data.ok || !data.data) return;
+
+          const d = data.data;
+
+          if (editBoleta)  editBoleta.value  = d.boleta || '';
+          if (editCurp)    editCurp.value    = d.curp || '';
+          if (editNombre)  editNombre.value  = d.nombre || '';
+          if (editCarrera) editCarrera.value = d.carrera || '';
+          if (editEscuela && d.escuela_sigla){
+            editEscuela.value = d.escuela_sigla;
+          }
+          if (editTurno)   editTurno.value   = d.turno || '';
+          if (editPin)     editPin.value     = d.pin || '';
+          if (editUrl)     editUrl.value     = d.url || '';
+        })
+        .catch(console.error);
+    }
+    // Si es PROFESOR registrado en la tabla profesores, pedimos detalle al backend
+    else if (tipo === 'Profesor' && origen === 'profesores' && id){
+      limpiarFormularioProfesor();
+
+      fetch("{{ url_for('usuarios_bp.api_detalle_profesor') }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch"
+        },
+        body: JSON.stringify({ id, origen })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (!data || !data.ok || !data.data) return;
+
+          const d = data.data;
+
+          if (editProfEmpleado) editProfEmpleado.value = d.numero_empleado || '';
+          if (editProfNombre)   editProfNombre.value   = d.nombre || '';
+          if (editProfClave)    editProfClave.value    = d.clave_presupuestal || '';
+          if (editProfArea)     editProfArea.value     = d.area_adscripcion || '';
+          if (editProfUrl)      editProfUrl.value      = d.url || '';
+          if (editProfPin)      editProfPin.value      = d.pin || '';
+        })
+        .catch(console.error);
+    }
+
+  });
+
+  if (closeBtn){
+    closeBtn.addEventListener('click', cerrarModalEditar);
+  }
+
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay){
+      cerrarModalEditar();
+    }
+  });
+
+  if (form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      // Más adelante metemos la lógica para guardar cambios en BD
+      cerrarModalEditar();
+    });
+  }
+})();
+</script>
+
+
+
+
+
+
+
+
+<!-- Script para editar usuario -->
+<script>
+(function(){
+  const overlay      = document.getElementById('modal-editar-overlay');
+  const closeBtn     = document.getElementById('modal-editar-close');
+  const form         = document.getElementById('form-editar-usuario');
+  const tituloModal  = document.getElementById('modal-editar-titulo');
+  const formAlumno   = document.getElementById('edit-form-alumno');
+  const formProfesor = document.getElementById('edit-form-profesor');
+  const tbody        = document.getElementById('usuarios-body');
+
+  // Campos del formulario de ALUMNO (editar)
+  const editBoleta   = document.getElementById('edit-alumno-boleta');
+  const editCurp     = document.getElementById('edit-alumno-curp');
+  const editNombre   = document.getElementById('edit-alumno-nombre');
+  const editCarrera  = document.getElementById('edit-alumno-carrera');
+  const editEscuela  = document.getElementById('edit-alumno-escuela');
+  const editTurno    = document.getElementById('edit-alumno-turno');
+  const editPin      = document.getElementById('edit-alumno-pin');
+  const editUrl      = document.getElementById('edit-alumno-url');
+
+
+    // Campos del formulario de PROFESOR (editar)
+  const editProfEmpleado = document.getElementById('edit-prof-empleado');
+  const editProfNombre   = document.getElementById('edit-prof-nombre');
+  const editProfClave    = document.getElementById('edit-prof-clave');
+  const editProfArea     = document.getElementById('edit-prof-area');
+  const editProfUrl      = document.getElementById('edit-prof-url');
+  const editProfPin      = document.getElementById('edit-prof-pin');
+
+
+  // Estado interno de la edición
+  let tipoEdicion   = 'Alumno';  // 'Alumno' o 'Profesor'
+  let alumnoEditId  = null;
+  let alumnoOrigen  = '';
+
+  // Si no hay overlay o tbody, no hacemos nada
+  if (!overlay || !tbody) return;
+
+  function limpiarFormularioAlumno(){
+    if (editBoleta)  editBoleta.value  = '';
+    if (editCurp)    editCurp.value    = '';
+    if (editNombre)  editNombre.value  = '';
+    if (editCarrera) editCarrera.value = '';
+    if (editEscuela) editEscuela.value = 'Seleccionar escuela';
+    if (editTurno)   editTurno.value   = '';
+    if (editPin)     editPin.value     = '';
+    if (editUrl)     editUrl.value     = '';
+  }
+
+  function abrirModalEditar(tipo){
+    overlay.hidden = false;
+    document.body.classList.add('no-scroll');
+
+    tipoEdicion = tipo || 'Alumno';
+
+    if (tipoEdicion === 'Profesor'){
+      tituloModal.textContent = 'Editar Profesor';
+      if (formAlumno)   formAlumno.hidden   = true;
+      if (formProfesor) formProfesor.hidden = false;
+    } else {
+      tituloModal.textContent = 'Editar Alumno';
+      if (formAlumno)   formAlumno.hidden   = false;
+      if (formProfesor) formProfesor.hidden = true;
+    }
+  }
+
+  function cerrarModalEditar(){
+    overlay.hidden = true;
+    document.body.classList.remove('no-scroll');
+    tipoEdicion  = 'Alumno';
+    alumnoEditId = null;
+    alumnoOrigen = '';
+  }
+
+  // Delegar clic en el tbody para todos los botones Editar que se generen dinámicamente
+  tbody.addEventListener('click', function(e){
+    const btn = e.target.closest('.btn-usuario.btn-editar');
+    if (!btn) return;
+
+    const fila   = btn.closest('tr');
+    let tipo     = 'Alumno';
+    const origen = btn.dataset.origen || '';
+    const id     = btn.dataset.id || '';
+
+    if (fila){
+      // Si en la fila hay cápsula de profesor, lo tratamos como Profesor
+      const esProfesor = fila.querySelector('.badge-profesor');
+      if (esProfesor) tipo = 'Profesor';
+    }
+
+    alumnoEditId = id;
+    alumnoOrigen = origen;
+
+    abrirModalEditar(tipo);
+
+    // Si es ALUMNO registrado en la tabla alumnos, pedimos detalle al backend
+    if (tipo === 'Alumno' && origen === 'alumnos' && id){
+      limpiarFormularioAlumno();
+
+      fetch("{{ url_for('usuarios_bp.api_detalle_alumno') }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch"
+        },
+        body: JSON.stringify({ id, origen })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (!data || !data.ok || !data.data) return;
+
+          const d = data.data;
+
+          if (editBoleta)  editBoleta.value  = d.boleta || '';
+          if (editCurp)    editCurp.value    = d.curp || '';
+          if (editNombre)  editNombre.value  = d.nombre || '';
+          if (editCarrera) editCarrera.value = d.carrera || '';
+          if (editEscuela && d.escuela_sigla){
+            editEscuela.value = d.escuela_sigla;
+          }
+          if (editTurno)   editTurno.value   = d.turno || '';
+          if (editPin)     editPin.value     = d.pin || '';
+          if (editUrl)     editUrl.value     = d.url || '';
+        })
+        .catch(console.error);
+    }
+    // Para Profesor, por ahora solo mostramos el formulario vacío (sin cargar datos de BD)
+  });
+
+  if (closeBtn){
+    closeBtn.addEventListener('click', cerrarModalEditar);
+  }
+
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay){
+      cerrarModalEditar();
+    }
+  });
+
+  if (form){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+
+      // ======== GUARDAR CAMBIOS ALUMNO ========
+      if (tipoEdicion === 'Alumno'){
+        if (!alumnoEditId || alumnoOrigen !== 'alumnos'){
+          alert('No se encontró el alumno a editar.');
+          return;
+        }
+
+        const boleta  = (editBoleta && editBoleta.value || '').trim();
+        const curp    = (editCurp && editCurp.value || '').trim();
+        const nombre  = (editNombre && editNombre.value || '').trim();
+        const carrera = (editCarrera && editCarrera.value || '').trim();
+        const escuelaSel = editEscuela;
+        const turno   = (editTurno && editTurno.value || '').trim();
+        const pin     = (editPin && editPin.value || '').trim();
+        const url     = (editUrl && editUrl.value || '').trim();
+
+        const escuela_sigla = escuelaSel ? (escuelaSel.value || '').trim() : '';
+
+        if (!boleta || !curp || !nombre || !carrera ||
+            !escuela_sigla || !turno || !pin || !url){
+          alert('Debe llenar todos los campos para guardar los cambios del alumno.');
+          return;
+        }
+
+        if (escuela_sigla === 'Seleccionar escuela'){
+          alert('Debe seleccionar una escuela válida.');
+          return;
+        }
+
+        fetch("{{ url_for('usuarios_bp.api_actualizar_alumno') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "fetch"
+          },
+          body: JSON.stringify({
+            id: alumnoEditId,
+            boleta,
+            curp,
+            nombre,
+            carrera,
+            escuela_sigla,
+            turno,
+            pin,
+            url
+          })
+        })
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.ok){
+              if (typeof window.renderUsuarios === 'function'){
+                window.renderUsuarios();
+              }
+              if (typeof window.refreshKpiUsuarios === 'function'){
+                window.refreshKpiUsuarios();
+              }
+              cerrarModalEditar();
+            } else {
+              if (data && data.error === 'duplicate_url'){
+                alert('Ya existe un usuario registrado con esa URL.');
+              } else if (data && data.error === 'invalid_escuela'){
+                alert('La escuela seleccionada no es válida.');
+              } else if (data && data.error === 'encrypt_error'){
+                alert('Ocurrió un error al cifrar los datos del alumno.');
+              } else {
+                alert('Ocurrió un error al guardar los cambios del alumno.');
+              }
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert('Ocurrió un error al guardar los cambios del alumno.');
+          });
+      }
+
+      // ======== GUARDAR CAMBIOS PROFESOR ========
+      else if (tipoEdicion === 'Profesor'){
+        if (!alumnoEditId || alumnoOrigen !== 'profesores'){
+          alert('No se encontró el profesor a editar.');
+          return;
+        }
+
+        const numero_empleado = (editProfEmpleado && editProfEmpleado.value || '').trim();
+        const nombre          = (editProfNombre && editProfNombre.value || '').trim();
+        const clave           = (editProfClave && editProfClave.value || '').trim();
+        const area            = (editProfArea && editProfArea.value || '').trim();
+        const url             = (editProfUrl && editProfUrl.value || '').trim();
+        const pin             = (editProfPin && editProfPin.value || '').trim();
+
+        if (!numero_empleado || !nombre || !clave || !area || !url || !pin){
+          alert('Debe llenar todos los campos para guardar los cambios del profesor.');
+          return;
+        }
+
+        fetch("{{ url_for('usuarios_bp.api_actualizar_profesor') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "fetch"
+          },
+          body: JSON.stringify({
+            id: alumnoEditId,
+            numero_empleado,
+            nombre,
+            clave_presupuestal: clave,
+            area_adscripcion: area,
+            url,
+            pin
+          })
+        })
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.ok){
+              if (typeof window.renderUsuarios === 'function'){
+                window.renderUsuarios();
+              }
+              if (typeof window.refreshKpiUsuarios === 'function'){
+                window.refreshKpiUsuarios();
+              }
+              cerrarModalEditar();
+            } else {
+              if (data && data.error === 'duplicate_url'){
+                alert('Ya existe un profesor registrado con esa URL.');
+              } else if (data && data.error === 'encrypt_error'){
+                alert('Ocurrió un error al cifrar los datos del profesor.');
+              } else {
+                alert('Ocurrió un error al guardar los cambios del profesor.');
+              }
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert('Ocurrió un error al guardar los cambios del profesor.');
+          });
+      }
+    });
+  }
+
+})();
+</script>
+
+
+
+
+<!--descargar pdf-->
+
+<script>
+(function(){
+  const btnDescargar = document.querySelector('.btn-descargar');
+  if (!btnDescargar) return;
+
+  btnDescargar.addEventListener('click', function(){
+    const selectTipo   = document.getElementById('filtro-tipo');
+    const selectEstado = document.getElementById('filtro-estado');
+    const inputBuscar  = document.getElementById('buscador-usuarios');
+
+    const tipo   = selectTipo   ? (selectTipo.value || 'todos')   : 'todos';
+    const estado = selectEstado ? (selectEstado.value || 'todos') : 'todos';
+    const q      = inputBuscar  ? (inputBuscar.value || '')       : '';
+
+    const params = new URLSearchParams({
+      tipo: tipo,
+      estado: estado,
+      q: q
+    });
+
+    // Cambiamos la ubicación del navegador para disparar la descarga
+    window.location.href = "{{ url_for('usuarios_bp.descargar_usuarios_pdf') }}?" + params.toString();
+  });
+})();
+</script>
+
+
+<!--FILTRAR PIN-->
+
+
+<script>
+(function(){
+  const pinIds = ['alumno-pin', 'prof-pin', 'edit-alumno-pin', 'edit-prof-pin'];
+
+  pinIds.forEach(id => {
+    const input = document.getElementById(id);
+    if (!input) return;
+
+    input.addEventListener('input', function(){
+      // quitar todo lo que no sea número
+      let soloNumeros = this.value.replace(/\D/g, '');
+      // limitar a 4 caracteres
+      this.value = soloNumeros.slice(0, 4);
+    });
+  });
+})();
+</script>

@@ -1,0 +1,320 @@
+:root{
+  --guinda:#7a003c;
+  --guinda-osc:#5b002d;
+  --fondo:#f0f2f5;
+  --texto:#1c1e21;
+  --borde:#dadde1;
+  --tb-h:36px;
+  --tb-gap:8px;
+
+  --sidebar-w: 260px;
+  --radius: 10px;
+  --shadow: 0 8px 24px rgba(0,0,0,.08);
+  --guinda-soft: color-mix(in srgb, var(--guinda) 12%, #ffffff);
+}
+
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  background:var(--fondo);
+  color:var(--texto);
+}
+
+/* en style_panel_control.css */
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  background:var(--fondo);
+  color:var(--texto);
+  overflow-x:hidden;   /* evita scroll horizontal global */
+}
+
+
+/* ===== Topbar ===== */
+.topbar{
+  min-height:56px;
+  background:#fff;
+  border-bottom:1px solid var(--borde);
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:8px 16px;
+  justify-content:space-between;
+}
+
+.brand{
+  font-weight:800;
+  letter-spacing:.4px;
+  color:var(--guinda);
+  font-size:22px;
+}
+
+.brand-link{
+  text-decoration:none;
+  color:inherit;
+  display:inline-flex;
+  align-items:center;
+}
+.brand-link:focus{
+  outline:2px solid color-mix(in srgb, var(--guinda) 40%, transparent);
+  outline-offset:2px;
+}
+.brand-link:hover .brand{ filter:brightness(0.95) }
+
+.topbar-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.icon-btn{
+  width:36px;
+  height:36px;
+  border:0;
+  background:transparent;
+  display:inline-grid;
+  place-items:center;
+  cursor:pointer;
+  transition:transform .02s;
+}
+.icon-btn:active{ transform:translateY(1px) }
+.icon-bell{
+  width:24px;
+  height:24px;
+  fill:var(--guinda);
+}
+
+/* ===== Layout principal ===== */
+.layout{
+  display:grid;
+  grid-template-columns: minmax(200px, var(--sidebar-w)) 1fr;
+  gap:20px;
+  padding:20px;
+}
+
+/* ===== Sidebar ===== */
+.sidebar{
+  position: sticky;
+  top:56px;                         /* alto de la topbar */
+  align-self:start;
+  height: calc(100dvh - 56px);      /* ocupa todo el alto disponible */
+}
+
+.sidenav{
+  height: 100%;                     /* que la tarjeta llene la sidebar */
+  background:#fff;
+  border:1px solid var(--borde);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow:auto;                    /* scroll si algún día excede */
+}
+
+.nav-link{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius: var(--radius);
+  text-decoration:none;
+  color:inherit;
+  transition:background .15s, filter .15s;
+}
+.nav-link:hover{
+  background:#f6f7f9;
+  filter:brightness(0.98);
+}
+.nav-link.active{
+  background: var(--guinda-soft);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--guinda) 20%, transparent);
+}
+
+.ico{
+  font-size:18px;           /* tamaño de “icono” */
+  line-height:1;
+  width:22px;               /* ancho fijo para alinear texto */
+  text-align:center;
+}
+
+/* ===== Área de contenido ===== */
+.content{
+  min-height: calc(100dvh - 56px);
+  background: transparent;
+  padding: 4px;
+}
+
+h1{
+  font-size:1.5rem;
+  font-weight:700;
+  margin:0;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 920px){
+  :root{ --sidebar-w: 220px; }
+}
+@media (max-width: 760px){
+  .layout{
+    grid-template-columns: 1fr;
+  }
+  .sidebar{ height:auto; position:static; top:auto; }
+  .sidenav{ height:auto; }
+}
+
+
+/* Footer pegado abajo dentro del menú */
+.sidebar-footer{
+  margin-top: auto;              /* empuja al fondo */
+  padding-top: 8px;
+  border-top: 1px solid var(--borde);
+}
+
+/* Botón Cerrar sesión */
+.logout-btn{
+  width: 100%;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--guinda);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter .15s, transform .02s;
+}
+.logout-btn:hover{ filter: brightness(1.04); }
+.logout-btn:active{ transform: translateY(1px); }
+
+
+
+
+
+
+
+/* --- Badge de notificaciones en la campana --- */
+
+.icon-btn.notif {
+  position: relative; /* para posicionar el badge dentro del botón */
+}
+
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background-color: #d32f2f; /* rojo/guinda */
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px #ffffff; /* aro blanco alrededor */
+}
+
+/* ===================================================================
+   RESPONSIVIDAD EXTRA
+   - Ajustes para tablets, móviles y móviles muy pequeños
+   =================================================================== */
+
+/* Tablets y pantallas medianas */
+@media (max-width: 920px){
+  .layout{
+    gap:16px;
+    padding:16px;
+  }
+
+  .content{
+    padding:6px;
+  }
+}
+
+/* Móviles (≤ 760px) */
+@media (max-width: 760px){
+  .topbar{
+    padding:8px 12px;
+  }
+
+  .layout{
+    gap:14px;
+    padding:14px;
+  }
+
+  .sidenav{
+    padding:12px;
+  }
+
+  .nav-link{
+    padding:10px 12px;
+  }
+
+  .content{
+    padding:2px;
+    min-height:auto; /* deja que el contenido crezca en vertical */
+  }
+}
+
+/* Móviles pequeños (≤ 520px) */
+@media (max-width: 520px){
+  .topbar{
+    flex-wrap:wrap;
+    row-gap:8px;
+  }
+
+  .brand{
+    font-size:20px;
+  }
+
+  .topbar-actions{
+    margin-left:auto;
+  }
+
+  .layout{
+    padding:12px 10px;
+    gap:10px;
+  }
+
+  .sidenav{
+    border-radius:10px;
+    box-shadow:0 4px 16px rgba(0,0,0,.06);
+  }
+
+  .nav-link{
+    padding:9px 10px;
+    gap:10px;
+  }
+
+  .logout-btn{
+    height:38px;
+    font-size:0.95rem;
+  }
+}
+
+/* Móviles muy pequeños (≤ 400px) */
+@media (max-width: 400px){
+  .brand{
+    font-size:18px;
+  }
+
+  .topbar{
+    padding-inline:8px;
+  }
+
+  .layout{
+    padding:10px 8px;
+  }
+
+  .sidenav{
+    padding:10px;
+  }
+
+  .nav-link{
+    padding:8px 10px;
+  }
+}

@@ -1,0 +1,423 @@
+:root{
+  --guinda:#7a003c;
+  --fondo:#f0f2f5;
+  --texto:#1c1e21;
+  --borde:#dadde1;
+
+  /* Colores de acento */
+  --ok:#2e7d32;      /* verde */
+  --warn:#f3a000;    /* ámbar */
+  --danger:#d32f2f;  /* rojo */
+  --alert:#f59e0b;   /* naranja */
+  --guinda-claro:#f6e5ec; /* guinda muy clarito */
+
+  --radius:12px;
+  --shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+/* ================= KPIs ================= */
+.kpis{
+  width:100%;
+  margin:0;
+  padding:16px 12px;
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:14px;
+}
+.kpi{
+  background:#fff;
+  border:1px solid var(--borde);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:14px 12px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:86px;
+}
+.kpi::before{
+  content:"";
+  position:absolute;
+  left:0; top:8px; bottom:8px;
+  width:4px;
+  border-radius:10px;
+  background:var(--guinda);
+}
+.kpi-ok::before{ background:var(--ok); }
+.kpi-warn::before{ background:var(--warn); }
+.kpi-danger::before{ background:var(--danger); }
+.kpi-alert::before{ background:var(--alert); }
+
+.kpi-num{
+  font-size:28px;
+  font-weight:800;
+  line-height:1;
+  margin-bottom:6px;
+  color:#111;
+}
+.kpi-label{
+  font-size:14px;
+  color:#444;
+}
+
+/* ================= Panel / Card ================= */
+.card{
+  background:#fff;
+  border:1px solid var(--borde);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  margin:10px 12px 0;
+  overflow:hidden;
+}
+.card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 18px;
+  border-bottom:1px solid var(--borde);
+}
+.card-header h2{
+  margin:0;
+  font-size:22px;
+  color: var(--guinda);   /* antes: #2e7d32 */
+  font-weight:800;
+}
+
+/* ================= Botón ================= */
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:8px 14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:filter .15s, transform .02s;
+}
+.btn:active{ transform:translateY(1px) }
+.btn-success{
+  background:#38a169;     /* verde */
+  color:#fff;
+}
+.btn-success:hover{ filter:brightness(1.04) }
+
+/* ================= Docks ================= */
+.dock-grid{
+  /* antes era grid; ahora usamos flex para que no estire */
+  display: flex;
+  flex-wrap: wrap;             /* salta a la siguiente línea cuando no quepa */
+  gap: 12px;
+  padding: 12px 14px 16px;
+  align-items: flex-start;     /* alinea arriba */
+  justify-content: flex-start; /* deja espacio en blanco al final de la fila */
+}
+.dock-card{
+  width: 165px;                /* antes 200px */
+  min-height: 96px;            /* un poco más alto para acercarse a “cuadro” */
+  padding: 12px;
+  background: var(--guinda-claro);
+  border:1px solid #dceadd;
+  border-radius:10px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;          /* centra horizontalmente */
+  justify-content:center;      /* equilibra vertical */
+  gap:8px;
+  text-align:center;           /* centra el texto */
+}
+.dock-card h3{
+  margin:0;
+  font-size:15px;
+  font-weight:700;   /* ← ahora en negritas */
+  color:var(--guinda);
+}
+
+
+/* Etiquetas de estado */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 8px;                       /* antes 6px 10px */
+  border-radius:999px;
+  font-size:12px;                        /* antes 13px */
+  font-weight:600;                       /* legible pero no “bold” */
+  color:#fff;
+  width:max-content;
+}
+.badge.ok{
+  background: #2e7d32;
+}
+.badge.warn{
+  background: #f3a000;
+  color:#fff;               /* texto oscuro sobre ámbar */
+}
+.badge.danger{
+  background: #e53935;
+}
+
+/* =============== Responsive KPIs base =============== */
+@media (max-width: 1100px){
+  .kpis{ grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 820px){
+  .kpis{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px){
+  .kpis{ grid-template-columns: 1fr; }
+}
+
+
+
+
+
+
+
+/*Historial*/
+
+/* ===== Tabla simple en card ===== */
+.table-wrap{
+  padding: 0 14px 16px;
+  /* Permitir scroll horizontal si no cabe en pantallas pequeñas */
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+.table thead th{
+  text-align:center;
+  padding:12px 14px;
+  background: var(--guinda-claro);          /* verde muy claro */
+  color: var(--guinda);               /* mismo verde de estado ok */
+  font-weight:800;
+  border-bottom:1px solid var(--borde);
+}
+.table tbody td{
+  text-align:center;
+  padding:12px 14px;
+  color:#2f3539;
+  border-bottom:1px solid #eceff1; /* línea sutil entre filas */
+}
+.table tbody tr:last-child td{ border-bottom:0; }
+.table td.acciones{ white-space:nowrap; }
+
+/* ===== Botones extra (coherentes con tu set) ===== */
+.btn-warning{
+  background:#f3a000; /* ámbar */
+  color:#2b2b2b;
+}
+.btn-danger{
+  background:#d32f2f; /* rojo */
+  color:#fff;
+}
+.btn-outline-success{
+  background:transparent;
+  color:#2e7d32;
+  border:2px solid #2e7d32;
+}
+.btn-warning:hover,
+.btn-danger:hover,
+.btn-outline-success:hover{
+  filter:brightness(1.04);
+}
+
+
+/*CHIPS*/
+
+/* Chips de acción (no botones) */
+.tag{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  border:1px solid;
+  line-height:1;
+}
+.tag-ingreso{
+  color:#2e7d32;          /* verde */
+  background:#e7f6ec;     /* verde muy claro */
+  border-color:#a5d6a7;   /* borde suave */
+}
+.tag-desocupo{
+  color:#b71c1c;          /* rojo oscuro */
+  background:#fdeeee;     /* rojo muy claro */
+  border-color:#ef9a9a;   /* borde suave */
+}
+/* separación entre chips dentro de la celda */
+.table td.acciones .tag + .tag{ margin-left:8px; }
+
+
+
+
+
+/* ===== Pastillas de tipo (Alumno / Profesor) ===== */
+.tipo-pill{
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid;
+  line-height: 1;
+}
+
+.tipo-alumno{
+  color: #1e88e5;          /* azul */
+  background:rgba(30,136,229,0.08);     /* azul muy clarito */
+  border-color: #1e88e5;
+}
+
+.tipo-profesor{
+  color:#f9a825;         /* naranja */
+  background:rgba(249,168,37,0.12);     /* naranja clarito */
+  border:1px solid #f9a825;
+}
+
+
+
+/* ===================================================================
+   RESPONSIVIDAD EXTRA DASHBOARD
+   - Ajustes para docks, tarjetas y tabla en móviles/tablets
+   =================================================================== */
+
+/* Tablets / pantallas medianas */
+@media (max-width: 900px){
+  /* Docks: 2 columnas más fluidas */
+  .dock-grid{
+    justify-content:flex-start;
+  }
+  .dock-card{
+    width: calc(50% - 8px); /* 2 por fila con el gap */
+  }
+
+  .card{
+    margin:10px 10px 0;
+  }
+
+  .card-header h2{
+    font-size:20px;
+  }
+}
+
+/* Móviles (≤ 720px) */
+@media (max-width: 720px){
+  .kpis{
+    padding:12px 10px;
+    gap:10px;
+  }
+
+  .kpi{
+    padding:12px 10px;
+    min-height:76px;
+  }
+
+  .kpi-num{
+    font-size:24px;
+  }
+  .kpi-label{
+    font-size:13px;
+  }
+
+  .card{
+    margin:10px 8px 0;
+  }
+
+  .card-header{
+    padding:12px 14px;
+  }
+  .card-header h2{
+    font-size:19px;
+  }
+
+  .dock-grid{
+    padding:10px 10px 14px;
+    gap:10px;
+  }
+
+  .dock-card{
+    min-height:90px;
+    padding:10px;
+  }
+
+  .table{
+    font-size:13px;
+  }
+  .table thead th,
+  .table tbody td{
+    padding:8px 10px;
+  }
+}
+
+/* Móviles pequeños (≤ 480px) */
+@media (max-width: 480px){
+  /* KPIs en una sola columna ya están por media anterior de 520px */
+  .kpis{
+    padding:10px 6px;
+    gap:8px;
+  }
+
+  .kpi{
+    min-height:70px;
+    border-radius:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,.06);
+  }
+
+  .card{
+    margin:8px 6px 0;
+    border-radius:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,.06);
+  }
+
+  .card-header{
+    padding:10px 12px;
+  }
+  .card-header h2{
+    font-size:17px;
+  }
+
+  .dock-grid{
+    padding:8px 8px 12px;
+    justify-content:center; /* centra las tarjetas en columnas */
+  }
+
+  .dock-card{
+    width:100%;      /* una columna, ocupa todo el ancho */
+    max-width:260px; /* pero no se hace gigantesca en pantallas más anchas */
+  }
+
+  .table-wrap{
+    padding:0 8px 12px;
+  }
+
+  .table{
+    font-size:12px;
+    min-width:640px; /* fuerza scroll horizontal suave, no se aplasta demasiado */
+  }
+
+  .table thead th,
+  .table tbody td{
+    padding:8px 8px;
+  }
+}
+
+/* Móviles muy pequeños (≤ 360px) */
+@media (max-width: 360px){
+  .kpi-num{
+    font-size:22px;
+  }
+  .kpi-label{
+    font-size:12px;
+  }
+
+  .card-header h2{
+    font-size:16px;
+  }
+
+  .dock-card h3{
+    font-size:14px;
+  }
+}

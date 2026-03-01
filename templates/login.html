@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+
+
+  <title>PoliBICI – Iniciar sesión</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_login.css') }}">
+  <style>:root { --guinda:#7a003c; }</style>
+</head>
+<body>
+  <main class="layout">
+    <!-- Lado marca -->
+    <section class="brand">
+      <h1 class="logo">PoliBICI</h1>
+      <p class="slogan">
+        Aparca tu bici con seguridad y acceso inteligente, al servicio de tu comunidad.
+      </p>
+    </section>
+
+    <!-- Tarjeta de login -->
+    <section class="card-login" aria-label="Formulario de inicio de sesión">
+      <!-- SLOT FIJO DE MENSAJES (no altera el alto de la tarjeta) -->
+      <div class="flash-slot">
+        {% with msgs = get_flashed_messages(with_categories=true) %}
+          {% if msgs %}
+            {% set last = msgs[-1] %}
+            <div class="flash {{ last[0] }}" role="status">{{ last[1] }}</div>
+          {% endif %}
+        {% endwith %}
+      </div>
+
+      <form method="post" action="{{ url_for('login') }}" novalidate>
+        <div class="campo">
+          <input
+            id="correo"
+            name="correo"
+            type="email"
+            placeholder="Correo institucional"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="campo">
+          <input
+            id="contrasena"
+            name="contrasena"
+            type="password"
+            placeholder="Contraseña"
+            autocomplete="current-password"
+            required
+            minlength="6"
+          />
+        </div>
+
+        <button class="btn btn-guinda" type="submit">Iniciar sesión</button>
+
+        <div class="acciones-secundarias">
+          <!-- Enlace actualizado al blueprint -->
+          <a href="{{ url_for('olvido.mostrar_formulario') }}" id="olvide">¿Olvidaste tu contraseña?</a>
+
+        </div>
+      </form>
+
+      <!-- SLOT INFERIOR (espacio simétrico) -->
+      <div class="flash-slot flash-slot--bottom"></div>
+    </section>
+  </main>
+
+  <!-- Auto-cierre del ÚNICO mensaje (5s + fade-out) -->
+  <script>
+  (function () {
+    const DURATION = 5000; // ms
+    const flash = document.querySelector('.flash-slot .flash');
+    if (!flash) return;
+
+    setTimeout(() => {
+      flash.classList.add('is-hiding');
+      flash.addEventListener('transitionend', () => flash.remove(), { once: true });
+    }, DURATION);
+  })();
+  </script>
+</body>
+</html>

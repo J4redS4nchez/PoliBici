@@ -1,0 +1,522 @@
+<!-- Fragmento de Docks (sin <head>/<body>) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/docks.css') }}">
+
+<section class="panel card">
+  <!-- Barra de filtros + búsqueda -->
+  <div class="docks-filters">
+    <div class="filters-left">
+      <select class="filter-select" id="filtro-estado">
+        <option value="todos">Todos los estados</option>
+        <option value="disponible">Disponibles</option>
+        <option value="en_uso">En uso</option>
+        <option value="con_fallas">Con fallas</option>
+      </select>
+    </div>
+
+    <div class="filters-right">
+      <div class="dock-search">
+        <span class="dock-search-icon" aria-hidden="true"></span>
+        <input
+          type="search"
+          class="dock-search-input"
+          placeholder="Buscar dock..."
+          aria-label="Buscar dock"
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjetas de docks (se llenan con JS según la BD) -->
+  <div class="docks-list">
+    <!-- Aquí JS insertará una tarjeta por cada registro en la tabla "dock" -->
+  </div>
+
+  <!-- Modal de detalles de Dock -->
+  <div class="dock-modal-backdrop" id="dock-modal">
+    <div class="dock-modal-dialog">
+      <header class="dock-modal-header">
+        <h2 class="dock-modal-title">Detalles del Dock</h2>
+        <button class="dock-modal-close" type="button" aria-label="Cerrar">×</button>
+      </header>
+
+      <div class="dock-modal-body">
+        <div class="dock-modal-left">
+          <div class="dock-modal-row">
+            <span class="dock-modal-label">Estado: </span>
+            <span class="dock-modal-state-pill"></span>
+          </div>
+
+          <ul class="dock-modal-list">
+            <!-- Aquí se copian los <li> de la tarjeta -->
+          </ul>
+        </div>
+
+        <div class="dock-modal-right">
+          <div class="dock-modal-zone">Zona: Entrada principal</div>
+          <div class="dock-modal-icon"></div> <!-- se queda para no romper el JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de eliminación -->
+  <div class="dock-delete-modal-backdrop" id="dock-delete-modal">
+    <div class="dock-delete-modal-dialog">
+      <h3 class="dock-delete-title">Eliminar dock</h3>
+      <p class="dock-delete-text">
+        ¿Seguro que deseas eliminar el Dock #<span id="dock-delete-id-label"></span>?<br>
+        Esta acción no se puede deshacer.
+      </p>
+      <div class="dock-delete-actions">
+        <button type="button" class="dock-delete-cancel">Cancelar</button>
+        <button type="button" class="dock-delete-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LÓGICA DEL MODAL (detalles + confirmación de eliminación) -->
+<script>
+  (function(){
+    const modal = document.getElementById('dock-modal');
+    if (!modal) return;
+
+    const titleEl    = modal.querySelector('.dock-modal-title');
+    const statePill  = modal.querySelector('.dock-modal-state-pill');
+    const listEl     = modal.querySelector('.dock-modal-list');
+    const iconEl     = modal.querySelector('.dock-modal-icon');
+    const closeBtn   = modal.querySelector('.dock-modal-close');
+    const zoneEl     = modal.querySelector('.dock-modal-zone');
+
+    function abrirDesdeTarjeta(card){
+      // Título
+      const h3 = card.querySelector('.dock-card-header h3');
+      titleEl.textContent = h3 ? `Detalles del ${h3.textContent.trim()}` : 'Detalles del dock';
+
+      // Estado (badge)
+      const badge = card.querySelector('.dock-badge');
+      statePill.textContent = badge ? badge.textContent.trim() : '';
+      statePill.className = 'dock-modal-state-pill'; // reset clases
+
+      if (badge){
+        if (badge.classList.contains('badge-disponible')){
+          statePill.classList.add('badge-disponible');
+        } else if (badge.classList.contains('badge-en-uso')){
+          statePill.classList.add('badge-en-uso');
+        } else if (badge.classList.contains('badge-falla')){
+          statePill.classList.add('badge-falla');
+        }
+      }
+
+      // Ícono grande
+      const icon = card.querySelector('.dock-icon');
+      iconEl.textContent = icon ? icon.textContent : '';
+
+      // Zona / Técnico (solo para dock con falla)
+      if (zoneEl){
+        if (card.classList.contains('dock-con-falla')){
+          zoneEl.innerHTML =
+            '<div><span class="dock-modal-label">Zona:</span> Entrada principal</div>' +
+            '<div><span class="dock-modal-label">Técnico:</span> Bryan Sánchez</div>';
+        } else {
+          zoneEl.innerHTML =
+            '<div><span class="dock-modal-label">Zona:</span> Entrada principal</div>';
+        }
+      }
+
+      // Marcar el modal como "de falla" o no
+      modal.classList.toggle(
+        'dock-modal-falla',
+        card.classList.contains('dock-con-falla')
+      );
+
+      // Lista de info (clonar <li>)
+      listEl.innerHTML = '';
+      card.querySelectorAll('.dock-info li').forEach(li => {
+        listEl.appendChild(li.cloneNode(true));
+      });
+
+      // Mostrar modal
+      modal.classList.add('is-open');
+      document.body.classList.add('dock-modal-open');
+    }
+
+    function cerrarModal(){
+      modal.classList.remove('is-open');
+      document.body.classList.remove('dock-modal-open');
+    }
+
+    // ---- Modal de confirmación de eliminación ----
+    const deleteModal   = document.getElementById('dock-delete-modal');
+    const deleteLabel   = deleteModal ? deleteModal.querySelector('#dock-delete-id-label') : null;
+    const btnCancelDel  = deleteModal ? deleteModal.querySelector('.dock-delete-cancel') : null;
+    const btnConfirmDel = deleteModal ? deleteModal.querySelector('.dock-delete-confirm') : null;
+    let dockIdToDelete = null;
+
+    function abrirModalEliminar(dockId){
+      dockIdToDelete = dockId;
+      if (deleteLabel) deleteLabel.textContent = dockIdToDelete;
+      if (deleteModal){
+        deleteModal.classList.add('is-open');
+        document.body.classList.add('dock-modal-open');
+      }
+    }
+
+    function cerrarModalEliminar(){
+      dockIdToDelete = null;
+      if (deleteModal){
+        deleteModal.classList.remove('is-open');
+      }
+      document.body.classList.remove('dock-modal-open');
+    }
+
+    // Delegación: clic en cualquier tarjeta dentro de .docks-list
+    const lista = document.querySelector('.docks-list');
+    if (lista){
+      lista.addEventListener('click', function(e){
+
+        // Si el clic fue en el botón X de la tarjeta
+        const btnX = e.target.closest('.dock-card-x');
+        if (btnX){
+          const card   = btnX.closest('.dock-card');
+          const dockId = card ? card.dataset.dockId : null;
+          if (!dockId) return;
+          abrirModalEliminar(Number(dockId));
+          return; // no abrimos el modal de detalles
+        }
+
+
+                // Si el clic fue en el botón de reiniciar (↻)
+        const btnReset = e.target.closest('.dock-reset-icon');
+        if (btnReset) {
+            const card   = btnReset.closest('.dock-card');
+            const dockId = card ? card.dataset.dockId : null;
+            if (!dockId) return;
+
+            fetch("{{ url_for('docks_bp.api_dock_reiniciar') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Requested-With": "fetch"
+                },
+                body: JSON.stringify({ id: Number(dockId) })
+            })
+            .then(r => r.json())
+            .then(resp => {
+                if (resp.ok) {
+                    if (typeof window.renderDockCards === "function") {
+                        window.renderDockCards(); // refrescar tarjetas
+                    }
+                } else {
+                    console.error("Error reiniciando dock", resp);
+                }
+            })
+            .catch(console.error);
+
+            return; // evitar abrir modal de detalles
+        }
+
+
+        const card = e.target.closest('.dock-card');
+        if (!card || !lista.contains(card)) return;
+        abrirDesdeTarjeta(card);
+      });
+    }
+
+    // Botones del modal de eliminación
+    if (btnCancelDel){
+      btnCancelDel.addEventListener('click', cerrarModalEliminar);
+    }
+    if (deleteModal){
+      // Cerrar al hacer click en el fondo oscuro del modal de eliminación
+      deleteModal.addEventListener('click', function(e){
+        if (e.target === deleteModal) cerrarModalEliminar();
+      });
+    }
+    if (btnConfirmDel){
+      btnConfirmDel.addEventListener('click', function(){
+        if (!dockIdToDelete) {
+          cerrarModalEliminar();
+          return;
+        }
+
+        fetch("{{ url_for('docks_bp.api_dock_delete') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "fetch"
+          },
+          body: JSON.stringify({ id: dockIdToDelete })
+        })
+        .then(r => r.json())
+        .then(resp => {
+          if (resp.ok){
+            if (typeof window.renderDockCards === "function"){
+              window.renderDockCards();
+            }
+          } else {
+            console.error("Error eliminando dock", resp);
+          }
+        })
+        .catch(console.error)
+        .finally(cerrarModalEliminar);
+      });
+    }
+
+    // Botón de cerrar del modal de detalles
+    if (closeBtn){
+      closeBtn.addEventListener('click', cerrarModal);
+    }
+
+    // Cerrar modal de detalles al hacer click en el fondo oscuro
+    modal.addEventListener('click', function(e){
+      if (e.target === modal) cerrarModal();
+    });
+  })();
+</script>
+
+<!-- RENDER, FILTRO Y BUSCADOR -->
+<script>
+  (function(){
+
+    // Formatea "aaaa-mm-dd,HH-MM-SS" -> Hoy/Ayer/fecha
+    function formatUltimoUso(ultimoRaw){
+      if (!ultimoRaw) return '—';
+
+      const [fechaStr, horaStr] = ultimoRaw.split(',');
+      if (!fechaStr) return ultimoRaw;
+
+      const [anioStr, mesStr, diaStr] = fechaStr.split('-');
+      const anio = parseInt(anioStr, 10);
+      const mes  = parseInt(mesStr, 10);
+      const dia  = parseInt(diaStr, 10);
+
+      if (!anio || !mes || !dia) return ultimoRaw;
+
+      const hoy    = new Date();
+      const hoyMid = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+      const uso    = new Date(anio, mes - 1, dia);
+      const usoMid = new Date(uso.getFullYear(), uso.getMonth(), uso.getDate());
+
+      const diffMs   = hoyMid - usoMid;
+      const diffDias = Math.round(diffMs / 86400000);
+
+      let horaTexto = '';
+      if (horaStr) {
+        const [hStr, mStr] = horaStr.split('-');
+        const h = (hStr || '').padStart(2, '0');
+        const m = (mStr || '').padStart(2, '0');
+        horaTexto = `${h}:${m}`;
+      }
+
+      if (diffDias === 0 && horaTexto) {
+        return `Hoy a las ${horaTexto} hrs.`;
+      } else if (diffDias === 1 && horaTexto) {
+        return `Ayer a las ${horaTexto} hrs.`;
+      } else {
+        const dd = String(dia).padStart(2, '0');
+        const mm = String(mes).padStart(2, '0');
+        return `${dd}/${mm}/${anio}`;
+      }
+    }
+
+    // Aplica filtro por select + búsqueda
+    function aplicarFiltrosYBusqueda(){
+      const select = document.getElementById('filtro-estado');
+      const input  = document.querySelector('.dock-search-input');
+      const valor  = select ? select.value : 'todos';      // todos | disponible | en_uso | con_fallas
+      const query  = input ? input.value.trim().toLowerCase() : '';
+
+      const cards = document.querySelectorAll('.docks-list .dock-card');
+
+      cards.forEach(card => {
+        let visible = true;
+
+        // --- Filtro por estado (select) ---
+        if (valor === 'disponible' && !card.classList.contains('dock-disponible')) {
+          visible = false;
+        } else if (valor === 'en_uso' && !card.classList.contains('dock-en-uso')) {
+          visible = false;
+        } else if (valor === 'con_fallas' && !card.classList.contains('dock-con-falla')) {
+          visible = false;
+        }
+
+        // --- Filtro por texto (buscador) ---
+        if (visible && query) {
+          const h3    = card.querySelector('.dock-card-header h3');
+          const titulo = h3 ? h3.textContent.toLowerCase() : ''; // "Dock #2"
+
+          const badge = card.querySelector('.dock-badge');
+          const estadoTexto = badge ? badge.textContent.toLowerCase() : ''; // "disponible", "en uso", "con falla"
+
+          // Extraer el número de dock (2 de "Dock #2")
+          let idText = '';
+          const m = titulo.match(/\d+/);
+          if (m) idText = m[0];
+
+          // blob con diferentes formas de referir al dock
+          const blob = [
+            titulo,                      // "dock #2"
+            idText,                      // "2"
+            idText ? `dock${idText}` : '',   // "dock2"
+            idText ? `dock ${idText}` : '',  // "dock 2"
+            estadoTexto                  // "disponible", "en uso", "con falla"
+          ].join(' ').toLowerCase();
+
+
+          if (!blob.includes(query)) {
+            visible = false;
+          }
+        }
+
+        card.style.display = visible ? '' : 'none';
+      });
+    }
+
+    // Genera las tarjetas según la BD
+    function renderDockCards(){
+      const lista = document.querySelector('.docks-list');
+      if (!lista) return;
+
+      fetch("{{ url_for('docks_bp.api_docks_list') }}", { cache: "no-store" })
+        .then(r => r.json())
+        .then(({ docks }) => {
+          lista.innerHTML = "";
+          if (!Array.isArray(docks)) return;
+
+          docks.forEach(dock => {
+            const status = (dock.status || '').toLowerCase();
+            const estado = (dock.estado || '').toLowerCase();
+            const card = document.createElement('article');
+
+            // Guardar id del dock en la tarjeta (para borrar)
+            card.dataset.dockId = dock.id;
+
+            // --- Con falla (status = inactivo) ---
+            if (status === 'inactivo') {
+              const problema     = dock.problema  || '—';
+              const reportadoRaw = dock.reportado || '';
+              const reportado    = formatUltimoUso(reportadoRaw);
+
+              card.className = 'dock-card dock-con-falla';
+              card.innerHTML = `
+                <header class="dock-card-header">
+                  <button class="dock-card-x" type="button" aria-label="Eliminar dock">×</button>
+                  <h3>Dock #${dock.id}</h3>
+                    <div class="dock-header-right">
+                        <span class="dock-badge badge-falla">Con falla</span>
+                        <button type="button" class="dock-reset-icon" aria-label="Reiniciar dock">↻</button>
+
+                        <span class="dock-dot-falla" aria-hidden="true"></span>
+                    </div>
+                </header>
+                <div class="dock-card-body">
+                  <div class="dock-icon">⚠️</div>
+                  <ul class="dock-info">
+                    <li><span>Problema:</span> ${problema}</li>
+                    <li><span>Reportado:</span> ${reportado}</li>
+                    <li>¡SE SOLICITA REVISIÓN!</li>
+                  </ul>
+                </div>
+              `;
+            }
+
+            // --- En uso (status = activo, estado = ocupado) ---
+            else if (status === 'activo' && estado === 'ocupado') {
+              const usuario   = dock.usuario    || '—';
+              const inicioRaw = dock.inicio_uso || '';
+              const sensor    = dock.sensor     || '—';
+              const inicio    = formatUltimoUso(inicioRaw);
+
+              card.className = 'dock-card dock-en-uso';
+              card.innerHTML = `
+                <header class="dock-card-header">
+                  <h3>Dock #${dock.id}</h3>
+                  <span class="dock-badge badge-en-uso">En uso</span>
+                </header>
+                <div class="dock-card-body">
+                  <div class="dock-icon">🔒</div>
+                  <ul class="dock-info">
+                    <li><span>Usuario:</span> ${usuario}</li>
+                    <li><span>Inicio:</span> ${inicio}</li>
+                    <li><span>Sensor:</span> ${sensor}</li>
+                  </ul>
+                </div>
+              `;
+            }
+
+            // --- Disponible (status = activo, estado = desocupado) ---
+            else if (status === 'activo' && estado === 'desocupado') {
+              const sensor    = dock.sensor     || '—';
+              const uso       = dock.uso        || '0';
+              const ultimoRaw = dock.ultimo_uso || '';
+              const ultimo    = formatUltimoUso(ultimoRaw);
+
+              card.className = 'dock-card dock-disponible';
+              card.innerHTML = `
+                <header class="dock-card-header">
+                  <button class="dock-card-x" type="button" aria-label="Eliminar dock">×</button>
+                  <h3>Dock #${dock.id}</h3>
+                  <span class="dock-badge badge-disponible">Disponible</span>
+                </header>
+                <div class="dock-card-body">
+                  <div class="dock-icon">🚲</div>
+                  <ul class="dock-info">
+                    <li><span>Ultimo uso:</span> ${ultimo}</li>
+                    <li><span>Uso total:</span> ${uso} veces</li>
+                    <li><span>Sensor:</span> ${sensor}</li>
+                  </ul>
+                </div>
+              `;
+            }
+
+            // --- Caso por defecto → la tratamos como disponible ---
+            else {
+              card.className = 'dock-card dock-disponible';
+              card.innerHTML = `
+                <header class="dock-card-header">
+                  <button class="dock-card-x" type="button" aria-label="Eliminar dock">×</button>
+                  <h3>Dock #${dock.id}</h3>
+                  <span class="dock-badge badge-disponible">Disponible</span>
+                </header>
+                <div class="dock-card-body">
+                  <div class="dock-icon">🚲</div>
+                  <ul class="dock-info">
+                    <li><span>Ultimo uso:</span> —</li>
+                    <li><span>Uso total:</span> 0 veces</li>
+                    <li><span>Sensor:</span> —</li>
+                  </ul>
+                </div>
+              `;
+            }
+
+            lista.appendChild(card);
+          });
+
+          // aplicar filtros + búsqueda actuales
+          aplicarFiltrosYBusqueda();
+        })
+        .catch(console.error);
+    }
+
+    // Exponer para panel_control.html (startKpiTimer)
+    window.renderDockCards = renderDockCards;
+
+    // Conectar el select de filtro
+    const filtroSelect = document.getElementById('filtro-estado');
+    if (filtroSelect) {
+      filtroSelect.addEventListener('change', aplicarFiltrosYBusqueda);
+    }
+
+    // Conectar el buscador (input en vivo)
+    const searchInput = document.querySelector('.dock-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', aplicarFiltrosYBusqueda);
+    }
+
+    // Primera carga de tarjetas cuando se inserta el fragmento
+    renderDockCards();
+
+  })();
+</script>

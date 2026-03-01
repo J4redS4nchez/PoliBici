@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "estado": "desocupado",
+  "sensor": "activo",
+  "scanner": "activo",
+  "status": "activo",
+  "zona": "Entrada Principal",
+  "tecnico": "Bryan Sánchez",
+  "inicio_uso": "",
+  "usuario": "",
+  "problema": "",
+  "reportado": ""
+}

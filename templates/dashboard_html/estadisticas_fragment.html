@@ -1,0 +1,400 @@
+<!-- Fragmento de Estadísticas (sin <head>/<body>) -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_css/estadisticas.css') }}">
+
+<!-- Cuadro: Usuarios Registrados -->
+<section class="panel card">
+  <header class="card-header">
+    <h2>Usuarios Registrados</h2>
+  </header>
+
+  <div class="estadisticas-contenido">
+<div class="pie-usuarios">
+
+  <!-- Columna izquierda: % + texto de Alumnos -->
+  <div class="pie-usuarios-col pie-usuarios-col-izq">
+    <span
+      class="pie-label pie-label-azul"
+      id="pie-label-alumnos"
+      {% if porc_alumnos == 0 %}style="display:none"{% endif %}>
+      {{ porc_alumnos }}%
+    </span>
+    <span class="pie-subtexto pie-subtexto-azul">
+      Alumnos (<span id="stat-alumnos">{{ alumnos }}</span>)
+    </span>
+  </div>
+
+  <!-- Pastel en el centro -->
+  <div
+    class="pie-usuarios-grafica{% if porc_alumnos == 0 and porc_profesores == 0 %} pie-sin-usuarios{% endif %}"
+    aria-label="Gráfica de pastel de usuarios registrados"
+    style="--porcentaje-azul: {{ porc_alumnos|default(0) }};">
+  </div>
+
+  <!-- Columna derecha: % + texto de Profesores -->
+  <div class="pie-usuarios-col pie-usuarios-col-der">
+    <span
+      class="pie-label pie-label-amarillo"
+      id="pie-label-profesores"
+      {% if porc_profesores == 0 %}style="display:none"{% endif %}>
+      {{ porc_profesores }}%
+    </span>
+    <span class="pie-subtexto pie-subtexto-amarillo">
+      Profesores (<span id="stat-profesores">{{ profesores }}</span>)
+    </span>
+  </div>
+
+</div>
+
+
+  </div>
+</section>
+
+
+
+<!-- Cuadro: Registros por Días -->
+<section class="panel card">
+  <header class="card-header">
+    <h2>Usos por Dia del Dock</h2>
+  </header>
+
+  <div class="registros-dia-contenido">
+    <div class="grafica-meses-wrapper">
+      <!-- Eje Y con valores de 0 a 10 -->
+      <div class="eje-y-meses">
+        <span>10</span>
+        <span>8</span>
+        <span>6</span>
+        <span>4</span>
+        <span>2</span>
+        <span>0</span>
+      </div>
+
+      <!-- Barras por día (Lun–Sáb) -->
+      <div class="grafica-barras-meses" aria-label="Gráfica de barras de registros por días">
+<div class="barra-mes">
+  <span class="barra-mes-valor">
+    {% if reg_lun > 0 %}{{ reg_lun }}{% endif %}
+  </span>
+  <div
+    class="barra-mes-rect barra-ene"
+    style="height: {{ altura_lun }}%;"
+    title="Lun: {{ reg_lun }} registros"
+  ></div>
+  <span class="barra-mes-label">Lun</span>
+</div>
+
+
+
+<div class="barra-mes">
+  <span class="barra-mes-valor">
+    {% if reg_mar > 0 %}{{ reg_mar }}{% endif %}
+  </span>
+  <div
+    class="barra-mes-rect barra-feb"
+    style="height: {{ altura_mar }}%;"
+    title="Mar: {{ reg_mar }} registros"
+  ></div>
+  <span class="barra-mes-label">Mar</span>
+</div>
+
+<div class="barra-mes">
+  <span class="barra-mes-valor">
+    {% if reg_mie > 0 %}{{ reg_mie }}{% endif %}
+  </span>
+  <div
+    class="barra-mes-rect barra-mar"
+    style="height: {{ altura_mie }}%;"
+    title="Mié: {{ reg_mie }} registros"
+  ></div>
+  <span class="barra-mes-label">Mié</span>
+</div>
+
+<div class="barra-mes">
+  <span class="barra-mes-valor">
+    {% if reg_jue > 0 %}{{ reg_jue }}{% endif %}
+  </span>
+  <div
+    class="barra-mes-rect barra-abr"
+    style="height: {{ altura_jue }}%;"
+    title="Jue: {{ reg_jue }} registros"
+  ></div>
+  <span class="barra-mes-label">Jue</span>
+</div>
+
+<div class="barra-mes">
+  <span class="barra-mes-valor">
+    {% if reg_vie > 0 %}{{ reg_vie }}{% endif %}
+  </span>
+  <div
+    class="barra-mes-rect barra-may"
+    style="height: {{ altura_vie }}%;"
+    title="Vie: {{ reg_vie }} registros"
+  ></div>
+  <span class="barra-mes-label">Vie</span>
+</div>
+
+<div class="barra-mes">
+  <span class="barra-mes-valor">
+    {% if reg_sab > 0 %}{{ reg_sab }}{% endif %}
+  </span>
+  <div
+    class="barra-mes-rect barra-jun"
+    style="height: {{ altura_sab }}%;"
+    title="Sáb: {{ reg_sab }} registros"
+  ></div>
+  <span class="barra-mes-label">Sáb</span>
+</div>
+
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Cuadro: Cantidad de Usuarios -->
+<section class="panel card">
+  <header class="card-header">
+    <h2>Cantidad de Usuarios</h2>
+  </header>
+
+  <div class="tiempo-dock-contenido">
+    <div class="grafica-usuarios-wrapper">
+      <!-- Eje Y de 0 a 10 (de 2 en 2) -->
+      <div class="eje-y-usuarios">
+        <span>10</span>
+        <span>8</span>
+        <span>6</span>
+        <span>4</span>
+        <span>2</span>
+        <span>0</span>
+      </div>
+
+      <!-- Barras por tipo de usuario -->
+<div class="grafica-barras-usuarios" aria-label="Gráfica de barras de cantidad de usuarios">
+  <div class="barra-usuario">
+    <span class="barra-usuario-valor barra-usuario-valor-alumnos">
+      {% if alumnos > 0 %}{{ alumnos }}{% endif %}
+    </span>
+    <div
+      class="barra-usuario-rect barra-alumnos"
+      style="height: {{ altura_alumnos }}%;"
+      title="Alumnos: {{ alumnos }}"
+    ></div>
+    <span class="barra-usuario-label">Alumnos</span>
+  </div>
+
+  <div class="barra-usuario">
+    <span class="barra-usuario-valor barra-usuario-valor-profesores">
+      {% if profesores > 0 %}{{ profesores }}{% endif %}
+    </span>
+    <div
+      class="barra-usuario-rect barra-profesores"
+      style="height: {{ altura_profesores }}%;"
+      title="Profesores: {{ profesores }}"
+    ></div>
+    <span class="barra-usuario-label">Profesores</span>
+  </div>
+
+  <div class="barra-usuario">
+    <span class="barra-usuario-valor barra-usuario-valor-noinscritos">
+      {% if no_inscritos > 0 %}{{ no_inscritos }}{% endif %}
+    </span>
+    <div
+      class="barra-usuario-rect barra-noinscritos"
+      style="height: {{ altura_no_inscritos }}%;"
+      title="No inscritos: {{ no_inscritos }}"
+    ></div>
+    <span class="barra-usuario-label">No inscritos</span>
+  </div>
+
+  <div class="barra-usuario">
+    <span class="barra-usuario-valor barra-usuario-valor-bloqueados">
+      {% if bloqueados > 0 %}{{ bloqueados }}{% endif %}
+    </span>
+    <div
+      class="barra-usuario-rect barra-bloqueados"
+      style="height: {{ altura_bloqueados }}%;"
+      title="Bloqueados: {{ bloqueados }}"
+    ></div>
+    <span class="barra-usuario-label">Bloqueados</span>
+  </div>
+</div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- AUTO-REFRESH DE ESTADÍSTICAS EN TIEMPO CASI REAL -->
+<script>
+  (function(){
+    const apiUrl = "{{ url_for('estadisticas_bp.api_data') }}";
+
+    function applyStats(data){
+      // Si ya no está el fragmento en pantalla, no hacemos nada
+      if (!document.querySelector('.pie-usuarios-grafica')) return;
+
+      const pie     = document.querySelector('.pie-usuarios-grafica');
+      const lblAlum = document.getElementById('pie-label-alumnos');
+      const lblProf = document.getElementById('pie-label-profesores');
+
+      const porcA = (typeof data.porc_alumnos === 'number')   ? data.porc_alumnos   : 0;
+      const porcP = (typeof data.porc_profesores === 'number') ? data.porc_profesores : 0;
+
+      // --- Función auxiliar para colocar el texto en el centro de la rebanada ---
+       // --- Función auxiliar para mostrar/ocultar etiquetas y actualizar texto ---
+      function actualizarEtiqueta(label, porcentaje){
+        if (!label) return;
+
+        if (!porcentaje || porcentaje <= 0){
+          label.style.display = 'none';
+          return;
+        }
+
+        label.style.display = 'inline';
+        label.textContent = Math.round(porcentaje) + '%';
+      }
+
+      // Actualizar porcentajes (ahora siempre van fuera del pastel)
+      actualizarEtiqueta(lblAlum, porcA);
+      actualizarEtiqueta(lblProf, porcP);
+
+
+      // --- Fondo del pastel (azul/amarillo o todo guinda si 0/0) ---
+      if (pie) {
+        pie.style.setProperty('--porcentaje-azul', porcA);
+
+        if (porcA === 0 && porcP === 0) {
+          pie.classList.add('pie-sin-usuarios');
+        } else {
+          pie.classList.remove('pie-sin-usuarios');
+        }
+      }
+
+
+
+      // --- Leyenda numérica de alumnos/profesores ---
+      const statAlum = document.getElementById('stat-alumnos');
+      const statProf = document.getElementById('stat-profesores');
+      if (statAlum && typeof data.alumnos === 'number') {
+        statAlum.textContent = data.alumnos;
+      }
+      if (statProf && typeof data.profesores === 'number') {
+        statProf.textContent = data.profesores;
+      }
+
+      // --- Cantidad de usuarios (barras) ---
+      function setBar(selector, altura, titulo, valor){
+        const el = document.querySelector(selector);
+        if (!el) return;
+
+        if (typeof altura === 'number') {
+          el.style.height = altura + '%';
+        }
+
+        if (titulo) {
+          el.title = titulo;
+        }
+
+        // Actualizar el número que está arriba de la barra
+        if (typeof valor === 'number') {
+          const cont = el.parentElement;
+          if (cont) {
+            const spanValor = cont.querySelector('.barra-usuario-valor');
+            if (spanValor) {
+              spanValor.textContent = (valor > 0) ? valor : '';
+            }
+          }
+        }
+      }
+
+
+
+      setBar(
+        '.barra-usuario-rect.barra-alumnos',
+        data.altura_alumnos,
+        'Alumnos: ' + (data.alumnos ?? 0),
+        data.alumnos ?? 0
+      );
+      setBar(
+        '.barra-usuario-rect.barra-profesores',
+        data.altura_profesores,
+        'Profesores: ' + (data.profesores ?? 0),
+        data.profesores ?? 0
+      );
+      setBar(
+        '.barra-usuario-rect.barra-noinscritos',
+        data.altura_no_inscritos,
+        'No inscritos: ' + (data.no_inscritos ?? 0),
+        data.no_inscritos ?? 0
+      );
+      setBar(
+        '.barra-usuario-rect.barra-bloqueados',
+        data.altura_bloqueados,
+        'Bloqueados: ' + (data.bloqueados ?? 0),
+        data.bloqueados ?? 0
+      );
+
+
+      // --- Registros por día (barras) ---
+      function setDia(selector, altura, etiqueta, valor){
+        const el = document.querySelector(selector);
+        if (!el) return;
+        if (typeof altura === 'number') {
+          el.style.height = altura + '%';
+        }
+        if (typeof valor === 'number') {
+          el.title = etiqueta + ': ' + valor + ' registros';
+
+          // Actualizar el número que está arriba de la barra
+          const cont = el.parentElement;
+          if (cont) {
+            const spanValor = cont.querySelector('.barra-mes-valor');
+            if (spanValor) {
+              spanValor.textContent = (valor > 0) ? valor : '';
+            }
+          }
+        }
+      }
+
+
+      setDia('.barra-mes-rect.barra-ene', data.altura_lun, 'Lun', data.reg_lun);
+      setDia('.barra-mes-rect.barra-feb', data.altura_mar, 'Mar', data.reg_mar);
+      setDia('.barra-mes-rect.barra-mar', data.altura_mie, 'Mié', data.reg_mie);
+      setDia('.barra-mes-rect.barra-abr', data.altura_jue, 'Jue', data.reg_jue);
+      setDia('.barra-mes-rect.barra-may', data.altura_vie, 'Vie', data.reg_vie);
+      setDia('.barra-mes-rect.barra-jun', data.altura_sab, 'Sáb', data.reg_sab);
+    }
+
+    async function fetchStats(){
+      // Si ni siquiera está el fragmento de estadísticas, no hagas nada
+      if (!document.querySelector('.pie-usuarios-grafica')) return;
+
+      try {
+        const resp = await fetch(apiUrl, {
+          cache: 'no-store',
+          headers: { 'X-Requested-With': 'fetch' }
+        });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        applyStats(data);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // 👉 Primera carga inmediata cuando se inserta el fragmento
+    fetchStats();
+
+setInterval(fetchStats, 5000);
+
+    // 👉 Enganchamos las estadísticas al timer global del panel:
+    // panel_control.html llama a refreshKpiUsuarios() cada 5 segundos.
+    // Aquí hacemos que, mientras esté esta pestaña, esa función sea fetchStats.
+    window.refreshKpiUsuarios = fetchStats;
+
+  })();
+</script>

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel de PoliBICI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_panel_control.css') }}">
+</head>
+<body>
+  <!-- Topbar -->
+  <header class="topbar">
+    <a class="brand-link" href="{{ url_for('panel_control.mostrar_panel') }}">
+      <span class="brand">PoliBICI</span>
+    </a>
+    <div class="topbar-actions">
+        <button class="icon-btn notif"
+                id="btn-notificaciones"
+                data-url="{{ url_for('notificaciones_cuadro_bp.cuadro') }}"
+                aria-label="Notificaciones">
+          <svg class="icon-bell" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2Zm6-6v-5a6 6 0 1 0-12 0v5l-2 2v1h16v-1l-2-2Z"/>
+          </svg>
+                        <!-- 🔴 Badge de número de notificaciones no leídas -->
+              <span id="notif-badge" class="notif-badge" hidden>0</span>
+        </button>
+
+                <!-- 🎵 Sonido de notificación -->
+        <audio id="notif-sound"
+               src="{{ url_for('static', filename='audio/notificacion.mp3') }}"
+               preload="auto"></audio>
+
+    </div>
+  </header>
+
+  <!-- Layout con sidebar + contenido -->
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidenav">
+        <a class="nav-link active"
+           href="#"
+           data-fragment="{{ url_for('dashboard_bp.fragment') }}">
+          <span class="ico" aria-hidden="true">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-link"
+          href="#"
+          data-fragment="{{ url_for('docks_bp.fragment') }}">
+          <span class="ico" aria-hidden="true">🚲</span>
+          <span>Docks</span>
+        </a>
+        
+        <a class="nav-link"
+           href="#"
+           data-fragment="{{ url_for('usuarios_bp.fragment') }}">
+          <span class="ico" aria-hidden="true">👥</span>
+          <span>Usuarios</span>
+        </a>
+
+
+        <!-- ESTADISTICAS -->
+        <a class="nav-link"
+           href="#"
+           data-fragment="{{ url_for('estadisticas_bp.fragment') }}">
+          <span class="ico" aria-hidden="true">📈</span>
+          <span>Estadisticas</span>
+        </a>
+
+
+        <!-- AMINISTRADOR -->
+        <a class="nav-link"
+           href="#"
+           data-fragment="{{ url_for('administrador_bp.fragment') }}">
+          <span class="ico" aria-hidden="true">⚙️</span>
+          <span>Configuración</span>
+        </a>
+
+        <div class="sidebar-footer">
+          <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="logout-btn">Cerrar sesión</button>
+          </form>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Zona donde se inyectarán los fragmentos -->
+    <main id="vista" class="content"></main>
+  </div>
+
+  <!-- JS mínimo para cargar el fragmento dentro de #vista -->
+<script>
+  function cargarFragmento(link){
+    const url = link.dataset.fragment;
+    if(!url) return;
+
+    fetch(url, { headers: { 'X-Requested-With': 'fetch' }})
+      .then(r => r.text())
+      .then(html => {
+        const cont = document.getElementById('vista');
+
+        // Inyecta el HTML del fragmento
+        cont.innerHTML = html;
+
+        // Ejecuta los <script> que vienen dentro del fragmento
+        cont.querySelectorAll('script').forEach(old => {
+          const s = document.createElement('script');
+          if (old.src) {
+            s.src = old.src;
+          } else {
+            s.textContent = old.textContent;
+          }
+          Array.from(old.attributes).forEach(a => {
+            if (a.name !== 'src') s.setAttribute(a.name, a.value);
+          });
+          document.body.appendChild(s);
+          s.remove();
+        });
+
+        // arranca/renueva el refresco del KPI (ya existe #kpi-docks-total)
+        startKpiTimer();
+
+        // Activar estado del menú
+        document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+      })
+      .catch(console.error);
+  }
+
+  // Delegar clic...
+  document.querySelectorAll('.nav-link[data-fragment]').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); cargarFragmento(a); });
+  });
+
+  // Carga automática del Dashboard
+  const primero = document.querySelector('.nav-link[data-fragment]');
+  if (primero) cargarFragmento(primero);
+</script>
+
+
+
+<script>
+  // --- AUTO-REFRESH KPI: Docks Totales, en Uso, con Fallas y Usuarios Bloqueados ---
+  async function refreshKpiDocks(){
+    const elTotal      = document.querySelector('#vista #kpi-docks-total');
+    const elUso        = document.querySelector('#vista #kpi-docks-uso');
+    const elFallas     = document.querySelector('#vista #kpi-docks-fallas');
+    const elBloqueados = document.querySelector('#vista #kpi-usuarios-bloqueados');
+
+    if (!elTotal && !elUso && !elFallas && !elBloqueados) return;
+
+    try {
+      const r = await fetch("{{ url_for('dashboard_bp.api_docks_count') }}", { cache: "no-store" });
+      const { total, en_uso, fallas, bloqueados } = await r.json();
+
+      if (elTotal)      elTotal.textContent      = (typeof total === 'number')      ? total      : 0;
+      if (elUso)        elUso.textContent        = (typeof en_uso === 'number')     ? en_uso     : 0;
+      if (elFallas)     elFallas.textContent     = (typeof fallas === 'number')     ? fallas     : 0;
+      if (elBloqueados) elBloqueados.textContent = (typeof bloqueados === 'number') ? bloqueados : 0;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  let kpiTimer = null;
+function startKpiTimer(){
+  if (kpiTimer) clearInterval(kpiTimer);
+
+  // Actualización inmediata
+  refreshKpiDocks();
+
+  // 🔔 Actualizar badge de notificaciones inmediatamente
+  if (typeof window.refreshNotifBadge === 'function') {
+    window.refreshNotifBadge();
+  }
+
+  if (typeof window.refreshKpiUsuarios === 'function') {
+    window.refreshKpiUsuarios();
+  }
+  if (typeof window.renderDockCards === 'function') {
+    window.renderDockCards();
+  }
+  if (typeof window.renderHistorial === 'function') {
+    window.renderHistorial();
+  }
+  if (typeof window.renderUsuarios === 'function') {
+    window.renderUsuarios();
+  }
+
+  // Luego cada 5 segundos
+  kpiTimer = setInterval(() => {
+    refreshKpiDocks();
+
+    // 🔔 Badge cada 5s
+    if (typeof window.refreshNotifBadge === 'function') {
+      window.refreshNotifBadge();
+    }
+
+    if (typeof window.refreshKpiUsuarios === 'function') {
+      window.refreshKpiUsuarios();
+    }
+    if (typeof window.renderDockCards === 'function') {
+      window.renderDockCards();
+    }
+    if (typeof window.renderHistorial === 'function') {
+      window.renderHistorial();
+    }
+    if (typeof window.renderUsuarios === 'function') {
+      window.renderUsuarios();
+    }
+  }, 5000);
+}
+
+
+
+// --- BADGE DE NOTIFICACIONES NO LEÍDAS EN LA CAMPANA ---
+ async function refreshNotifBadge() {
+    const badge = document.getElementById('notif-badge');
+    if (!badge) return;
+
+    let count = 0;
+
+    try {
+      const resp = await fetch(
+        "{{ url_for('notificaciones_cuadro_bp.api_unread_count') }}",
+        { cache: "no-store" }
+      );
+      if (!resp.ok) throw new Error("Respuesta no OK");
+
+      const data = await resp.json();
+      if (data && data.ok && typeof data.count === "number") {
+        count = data.count;
+      }
+    } catch (e) {
+      console.error("Error refrescando badge de notificaciones:", e);
+      count = 0;
+    }
+
+    // 👀 Revisar si HAY nuevas no leídas comparado con la llamada anterior
+    if (typeof window._lastUnreadCount === "number") {
+      if (count > window._lastUnreadCount) {
+        const audio = document.getElementById('notif-sound');
+        if (audio) {
+          try {
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+          } catch (e) {
+            console.warn("No se pudo reproducir el sonido de notificación:", e);
+          }
+        }
+      }
+    }
+    // Guardar el valor actual para la siguiente comparación
+    window._lastUnreadCount = count;
+
+    // Mostrar u ocultar el circulito rojo
+    if (count > 0) {
+      badge.textContent = count > 99 ? "99+" : String(count);
+      badge.style.display = "flex";
+    } else {
+      badge.textContent = "";
+      badge.style.display = "none";
+    }
+  }
+
+  // La exponemos global para usarla desde otros scripts (cuadro de notificaciones)
+  window.refreshNotifBadge = refreshNotifBadge;
+
+
+</script>
+
+
+<script>
+  // Abrir cuadro de notificaciones al hacer clic en la campanita
+  (function(){
+    const btn = document.getElementById('btn-notificaciones');
+    if (!btn) return;
+
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+
+      const url = btn.dataset.url;
+      if (!url) return;
+
+      // Si ya hay un cuadro abierto, lo quitamos primero
+      const existente = document.getElementById('notif-overlay');
+      if (existente) {
+        existente.remove();
+      }
+
+      fetch(url, { headers: { 'X-Requested-With': 'fetch' }})
+        .then(r => r.text())
+        .then(html => {
+          // Usamos un contenedor temporal, igual que en cargarFragmento
+          const tmp = document.createElement('div');
+          tmp.innerHTML = html.trim();
+
+          // 1) Ejecutar los <script> que vienen en el HTML del cuadro
+          tmp.querySelectorAll('script').forEach(old => {
+            const s = document.createElement('script');
+            if (old.src) {
+              s.src = old.src;
+            } else {
+              s.textContent = old.textContent;
+            }
+            Array.from(old.attributes).forEach(a => {
+              if (a.name !== 'src') s.setAttribute(a.name, a.value);
+            });
+            document.body.appendChild(s);
+            s.remove();
+          });
+
+          // 2) Mover TODOS los nodos visibles (link + overlay) al body
+          Array.from(tmp.children).forEach(node => {
+            document.body.appendChild(node);
+          });
+
+          const overlay = document.getElementById('notif-overlay');
+          if (!overlay) return;
+
+          const closeBtn    = overlay.querySelector('.notif-close');
+          const verTodasBtn = overlay.querySelector('#btn-ver-notificaciones');
+
+          function cerrar() {
+            overlay.remove();
+          }
+
+          // Cerrar con la X (por si en algún momento agregas el botón)
+          if (closeBtn) {
+            closeBtn.addEventListener('click', cerrar);
+          }
+
+          // Cerrar haciendo clic fuera del panel
+          overlay.addEventListener('click', function(ev){
+            if (ev.target === overlay) {
+              cerrar();
+            }
+          });
+
+          // Ir al fragmento de notificaciones
+          if (verTodasBtn) {
+            verTodasBtn.addEventListener('click', function(){
+              const fragmentUrl = verTodasBtn.dataset.fragmentUrl;
+              if (fragmentUrl && typeof window.cargarFragmento === 'function') {
+                const fakeLink = document.createElement('a');
+                fakeLink.dataset.fragment = fragmentUrl;
+                window.cargarFragmento(fakeLink);
+              }
+              cerrar();
+            });
+          }
+
+          // 3) Ahora sí: initNotifOverlay ya está definida por el <script> del cuadro
+          if (typeof window.initNotifOverlay === 'function') {
+            window.initNotifOverlay();
+          }
+        })
+        .catch(console.error);
+    });
+  })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
